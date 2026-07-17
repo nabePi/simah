@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     "Permintaan connect dan update terbaru seputar action item Anda di Simah - Aksi, Sinergi, Berdaya",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function NotificationsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");

@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   description: "Kelola draft action item Anda sebelum publish ke feed publik - Aksi, Sinergi, Berdaya",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function DraftsPage() {
   const session = await auth();
   const userId = Number(session?.user?.id);

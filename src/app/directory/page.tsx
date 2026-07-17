@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     "Cari dan terhubung dengan peserta FGD dari sektor Pendidikan, Ekonomi, dan Profesional - Aksi, Sinergi, Berdaya",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function DirectoryPage() {
   const session = await auth();
   const currentUserId = session?.user?.id ? Number(session.user.id) : NaN;

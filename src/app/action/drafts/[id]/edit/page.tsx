@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "Edit draft action / project lintas sektor Simah - Aksi, Sinergi, Berdaya",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function EditDraftActionPage({
   params,
 }: {

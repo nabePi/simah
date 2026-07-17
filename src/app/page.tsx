@@ -8,6 +8,15 @@ import { auth } from "@/auth/config";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Simah | Aksi, Sinergi, Berdaya",
+  description:
+    "Simah - Aksi, Sinergi, Berdaya. Minal Aqwal Ilal Af'al - Dari Narasi menuju Aksi",
+};
+
+export const dynamic = "force-dynamic";
 
 export default async function BerandaPage() {
   const session = await auth();

@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     "Pantau dan kelola item aksi dari sektor Pendidikan, Ekonomi, dan Profesional - Aksi, Sinergi, Berdaya",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ActionPage() {
   const allActions = await db
     .select({

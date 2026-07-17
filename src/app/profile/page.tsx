@@ -16,6 +16,8 @@ export const metadata: Metadata = {
     "Kelola informasi profil Anda agar mudah ditemukan dan terhubung dengan peserta lain di Direktori - Aksi, Sinergi, Berdaya",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");

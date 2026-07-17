@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "Buat action / project baru lintas sektor Simah - Aksi, Sinergi, Berdaya",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function NewActionPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");

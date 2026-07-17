@@ -10,6 +10,8 @@ import {
 } from "@/lib/queries";
 import { auth } from "@/auth/config";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

@@ -11,6 +11,8 @@ import {
   fetchManifestasiDetail,
 } from "@/lib/queries";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

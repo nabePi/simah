@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     "Panel admin Simah untuk mengelola pengguna, action item, dan notifikasi - Aksi, Sinergi, Berdaya",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function AdminDashboardPage() {
   return (
     <>
