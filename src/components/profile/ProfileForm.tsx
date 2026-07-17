@@ -123,14 +123,17 @@ export function ProfileForm({
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     startTransition(async () => {
-      const res = await updateProfile({
-        sector,
-        role,
-        organization,
-        skills,
-        offering,
-        showWhatsapp,
-      });
+      const payload = { sector, role, organization, skills, offering, showWhatsapp };
+      console.log("[profile:submit]", payload);
+      let res;
+      try {
+        res = await updateProfile(payload);
+      } catch (err) {
+        console.error("[profile:submit] threw", err);
+        alert("Gagal menyimpan profil. Coba lagi.");
+        return;
+      }
+      console.log("[profile:submit] response", res);
       if (res?.error) {
         alert(res.error);
         return;

@@ -24,23 +24,74 @@ export async function updateProfile(input: {
   offering: string;
   showWhatsapp: boolean;
 }): Promise<{ error?: string }> {
-  const { userId } = await requireUser();
-  await db
-    .update(users)
-    .set({
+  const startedAt = Date.now();
+  let userId: number | undefined;
+  try {
+    const ctx = await requireUser();
+    userId = ctx.userId;
+    console.log("[updateProfile] start", {
+      userId,
       sector: input.sector,
       role: input.role,
       organization: input.organization,
-      skills: input.skills,
-      offering: input.offering,
+      skillsCount: input.skills.length,
+      offeringLength: input.offering.length,
       showWhatsapp: input.showWhatsapp,
-      updatedAt: new Date(),
-    })
-    .where(eq(users.id, userId));
-  revalidatePath("/profile");
-  revalidatePath("/directory");
-  revalidatePath("/");
-  return {};
+    });
+
+    const returned = await db
+      .update(users)
+      .set({
+        sector: input.sector,
+        role: input.role,
+        organization: input.organization,
+        skills: input.skills,
+        offering: input.offering,
+        showWhatsapp: input.showWhatsapp,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+
+    const row = returned[0] ?? null;
+    console.log("[updateProfile] done", {
+      userId,
+      stored: row && {
+        id: row.id,
+        sector: row.sector,
+        role: row.role,
+        organization: row.organization,
+        skillsCount: row.skills?.length ?? 0,
+        offeringLength: row.offering?.length ?? 0,
+        showWhatsapp: row.showWhatsapp,
+        updatedAt: row.updatedAt,
+      },
+      ms: Date.now() - startedAt,
+    });
+    if (!row) {
+      console.error("[updateProfile] no row updated — userId did not match any user", {
+        userId,
+      });
+    }
+
+    revalidatePath("/profile");
+    revalidatePath("/directory");
+    revalidatePath("/");
+    console.log("[updateProfile] revalidated", {
+      userId,
+      paths: ["/profile", "/directory", "/"],
+      ms: Date.now() - startedAt,
+    });
+    return {};
+  } catch (err) {
+    console.error("[updateProfile] failed", {
+      userId,
+      ms: Date.now() - startedAt,
+      error: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+    });
+    throw err;
+  }
 }
 
 export async function updateAvatar(formData: FormData): Promise<{ error?: string; avatarUrl?: string }> {
