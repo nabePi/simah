@@ -9,7 +9,7 @@
 
 ## 1. Ringkasan (Overview)
 
-Aplikasi web (mobile-first / PWA) untuk mendukung acara FGD yang mempertemukan **3 sektor** peserta — **Pendidikan**, **Pengusaha**, dan **Profesional** — agar mereka saling mengenal lewat profil, **saling membantu antar sektor**, berkolaborasi, dan menghasilkan **action item / proyek nyata** yang dijalankan bersama dan dapat dimonitor setelah acara.
+Aplikasi web (mobile-first / PWA) untuk mendukung acara FGD yang mempertemukan **3 sektor** peserta — **Pendidikan**, **Ekonomi**, dan **Profesional** — agar mereka saling mengenal lewat profil, **saling membantu antar sektor**, berkolaborasi, dan menghasilkan **action item / proyek nyata** yang dijalankan bersama dan dapat dimonitor setelah acara.
 
 Alur inti:
 
@@ -24,14 +24,14 @@ Setiap action item adalah proyek bersama. Tiap sektor punya peran berbeda:
 | Sektor | Peran dalam proyek | Contoh (proyek "Peningkatan Kualitas Guru") |
 |---|---|---|
 | **Pendidikan** | **Pelaksana / pemilik domain** — merancang & menjalankan | Mencari cara melatih guru & menyosialisasikan ke sekolah |
-| **Pengusaha** | **Penyumbang / wakif** — mendukung pendanaan (wakaf/donasi) | Menyumbang/berwakaf agar pelatihan terwujud |
+| **Ekonomi** | **Penyumbang / wakif** — mendukung pendanaan (wakaf/donasi) | Menyumbang/berwakaf agar pelatihan terwujud |
 | **Profesional** | **Pendukung keahlian** — legal, akuntansi, IT, dll. | Mendukung legalitas, pengelolaan keuangan, sistem, dsb. |
 
 ### Antar sektor juga saling membantu (siklus saling menguatkan)
 
 Kolaborasi tidak hanya mengalir dari sektor → action item, tetapi juga **antar sektor**, sehingga terbentuk siklus yang saling menguatkan. Contoh nyata:
 
-> Sektor **Profesional** (mis. konsultan keuangan/legal/IT) membantu sektor **Pengusaha** meningkatkan revenue bisnisnya → pengusaha yang revenue-nya naik kemudian dapat **berwakaf/menyumbang lebih besar** ke action item bersama → proyek (mis. peningkatan kualitas guru) makin mungkin terwujud.
+> Sektor **Profesional** (mis. konsultan keuangan/legal/IT) membantu sektor **Ekonomi** meningkatkan revenue bisnisnya → ekonomi yang revenue-nya naik kemudian dapat **berwakaf/menyumbang lebih besar** ke action item bersama → proyek (mis. peningkatan kualitas guru) makin mungkin terwujud.
 
 Karena itu aplikasi perlu mencatat **dua jenis kolaborasi**:
 1. **Kontribusi ke action item** (sektor → proyek bersama) — lihat F7.
@@ -93,7 +93,7 @@ Karena itu aplikasi perlu mencatat **dua jenis kolaborasi**:
 1. Buka link → **Login**: No. WhatsApp + password (4 huruf awal nama + 4 digit akhir No. WA).
 2. **Login pertama → wajib ganti password**, lalu **lengkapi profil**.
 3. **Jelajah direktori peserta**: filter per sektor, cari, lihat profil lengkap.
-4. **Networking & saling bantu**: simpan/koneksi, scan QR, catat bantuan bilateral (mis. profesional bantu pengusaha).
+4. **Networking & saling bantu**: simpan/koneksi, scan QR, catat bantuan bilateral (mis. profesional bantu ekonomi).
 5. **Kolaborasi**: gabung grup lintas sektor, diskusi, catat ide.
 6. **Buat / ikut Action Item**: tentukan pelaksana, pendukung dana/wakif, dukungan keahlian, tenggat.
 7. **Pasca-FGD**: update progres, lihat dashboard.
@@ -124,7 +124,7 @@ Karena itu aplikasi perlu mencatat **dua jenis kolaborasi**:
 ### F3 — Profil & Onboarding Peserta **[MVP]**
 - F3.1 Tampilkan data dari Sheets (bisa dikoreksi peserta).
 - F3.2 Lengkapi data tambahan: foto, sub-sektor/peran (mis. Profesional → IT/Legal/Akuntan), keahlian (tags), bio singkat, **"Saya bisa membantu dengan…"**, **"Saya sedang mencari…"**, kontak yang boleh ditampilkan + kontrol privasi.
-  - *Field "bisa membantu / sedang mencari" ini kunci untuk mempertemukan antar sektor (mis. pengusaha mencari bantuan IT/legal → ketemu profesional).*
+  - *Field "bisa membantu / sedang mencari" ini kunci untuk mempertemukan antar sektor (mis. ekonomi mencari bantuan IT/legal → ketemu profesional).*
 - F3.3 Indikator kelengkapan profil (progress %).
 - F3.4 Validasi field wajib/opsional.
 
@@ -138,7 +138,7 @@ Karena itu aplikasi perlu mencatat **dua jenis kolaborasi**:
 - F4.7 (Opsional) tombol "Chat via WhatsApp" jika peserta mengizinkan.
 
 ### F5 — Matchmaking & Saling-Bantu Antar Sektor **[MVP ringan / v2]**
-- F5.1 **Rekomendasi koneksi**: cocokkan *"saya mencari"* satu orang dengan *"saya bisa bantu"* orang lain, **prioritas lintas sektor** (mis. pengusaha butuh bantuan keuangan ↔ profesional akuntan).
+- F5.1 **Rekomendasi koneksi**: cocokkan *"saya mencari"* satu orang dengan *"saya bisa bantu"* orang lain, **prioritas lintas sektor** (mis. ekonomi butuh bantuan keuangan ↔ profesional akuntan).
 - F5.2 **Tantangan ice-breaker**: mis. "kenalan dengan ≥1 orang tiap sektor".
 - F5.3 (v2) gamifikasi/leaderboard.
 
@@ -172,7 +172,7 @@ Satu Action Item = satu proyek bersama dengan kontribusi tiap sektor.
 
 Mencatat siklus "saling membantu" antar peserta/sektor — bukan hanya kontribusi ke action item.
 
-- F7B.1 **Buat catatan bantuan**: pemberi → penerima (mis. Profesional → Pengusaha), jenis bantuan (konsultasi bisnis, legal, akuntansi, IT, pemasaran, dll.), deskripsi singkat.
+- F7B.1 **Buat catatan bantuan**: pemberi → penerima (mis. Profesional → Ekonomi), jenis bantuan (konsultasi bisnis, legal, akuntansi, IT, pemasaran, dll.), deskripsi singkat.
 - F7B.2 **Status**: rencana → berjalan → selesai.
 - F7B.3 **Tautkan ke dampak** (opsional): mis. bantuan ini ditujukan agar penerima dapat berkontribusi ke action item tertentu (menggambarkan siklus revenue → wakaf).
 - F7B.4 **Tampil di dashboard** sebagai "jaringan kolaborasi antar sektor" — siapa membantu siapa.
@@ -547,7 +547,7 @@ erDiagram
         string password_hash
         boolean must_change_password
         string role "admin atau peserta"
-        string sektor "pendidikan/pengusaha/profesional"
+        string sektor "pendidikan/ekonomi/profesional"
         string sub_sektor
         string foto_url
         text bio
@@ -684,7 +684,7 @@ Wireframe mobile (struktur layout, bukan desain final). Render visual juga ditam
 │  (foto)  [ Unggah foto ] │
 │  Sektor                  │
 │  (•) Pendidikan          │
-│  ( ) Pengusaha           │
+│  ( ) Ekonomi           │
 │  ( ) Profesional         │
 │  Sub-sektor/peran        │
 │  [ mis. Guru SD        ] │
@@ -704,7 +704,7 @@ Wireframe mobile (struktur layout, bukan desain final). Render visual juga ditam
 │ [Semua][Pddk][Pgsh][Prof]│
 │  ┌─────────────────────┐ │
 │  │ ◯ Budi Santoso      │ │
-│  │   Pengusaha · F&B   │ │
+│  │   Ekonomi · F&B   │ │
 │  │   Cari: bantuan IT  │ │
 │  └─────────────────────┘ │
 │  ┌─────────────────────┐ │
@@ -723,7 +723,7 @@ Wireframe mobile (struktur layout, bukan desain final). Render visual juga ditam
 │  ←  Profil               │
 │         (foto)           │
 │       Budi Santoso       │
-│     Pengusaha · F&B      │
+│     Ekonomi · F&B      │
 │  Bisa membantu:          │
 │   • Pendanaan / wakaf    │
 │  Sedang mencari:         │

@@ -171,7 +171,7 @@ export function NotificationsSection({
                 onChange={(e) => setSector(e.target.value as Sector)}
                 className="w-full px-4 py-3 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               >
-                {(["pendidikan", "pengusaha", "profesional"] as Sector[]).map(
+                {(["pendidikan", "ekonomi", "profesional"] as Sector[]).map(
                   (s) => (
                     <option key={s} value={s}>
                       {sectorLabel[s]}

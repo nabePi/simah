@@ -149,8 +149,7 @@ Buka [http://localhost:3000](http://localhost:3000) di browser.
 
 ## Catatan Penting
 
-- **Sektor yang tersedia:** `pendidikan` (Pendidikan), `pengusaha` (Ekonomi), `profesional` (Profesional).
-  - UI menampilkan label **Ekonomi**, sementara nilai database dan CSV tetap menggunakan `pengusaha` untuk menjaga kompatibilitas.
+- **Sektor yang tersedia:** `pendidikan` (Pendidikan), `ekonomi` (Ekonomi), `profesional` (Profesional).
   - CSV import sekarang juga menerima alias `ekonomi`.
 - **Pendanaan tidak diproses di aplikasi.** Aplikasi hanya mencatat daftar pendukung/wakif dan status realisasinya.
 - **Avatar disimpan di R2** dan diakses melalui `/api/avatar/[...key]` untuk menjaga bucket tetap private.

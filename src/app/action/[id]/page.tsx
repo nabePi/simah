@@ -50,7 +50,7 @@ export default async function ActionDetailPage({
     types: c.types,
     sector: (c.sector ?? undefined) as
       | "pendidikan"
-      | "pengusaha"
+      | "ekonomi"
       | "profesional"
       | undefined,
     avatarUrl: c.avatarUrl ?? undefined,
@@ -64,7 +64,7 @@ export default async function ActionDetailPage({
         name: creator.name,
         sector: (creator.sector ?? undefined) as
           | "pendidikan"
-          | "pengusaha"
+          | "ekonomi"
           | "profesional"
           | undefined,
         avatarUrl: creator.avatarUrl ?? undefined,

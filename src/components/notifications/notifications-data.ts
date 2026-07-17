@@ -11,7 +11,7 @@ export type NotificationItem = {
   actorName?: string;
   actorAvatarUrl?: string;
   actorInitials?: string;
-  actorSector?: "pendidikan" | "pengusaha" | "profesional";
+  actorSector?: "pendidikan" | "ekonomi" | "profesional";
   connectionId?: number;
   variant?: "alert" | "info";
 };

@@ -17,7 +17,7 @@ async function requireUser() {
 }
 
 export async function updateProfile(input: {
-  sector: "pendidikan" | "pengusaha" | "profesional";
+  sector: "pendidikan" | "ekonomi" | "profesional";
   role: string;
   organization: string;
   skills: string[];

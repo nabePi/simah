@@ -268,7 +268,7 @@ export async function fetchNotificationsForUser(userId: number) {
     actorInitials: r.actorInitials ?? undefined,
     actorSector: (r.actorSector ?? undefined) as
       | "pendidikan"
-      | "pengusaha"
+      | "ekonomi"
       | "profesional"
       | undefined,
     connectionId:

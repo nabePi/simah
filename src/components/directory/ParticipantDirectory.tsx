@@ -10,7 +10,7 @@ import { connectRequest, approveConnection } from "@/actions/connections";
 
 const sectorOptions: { value: Sector; label: string; dotClass: string }[] = [
   { value: "pendidikan", label: "Pendidikan", dotClass: "bg-sector-pendidikan" },
-  { value: "pengusaha", label: "Ekonomi", dotClass: "bg-sector-pengusaha" },
+  { value: "ekonomi", label: "Ekonomi", dotClass: "bg-sector-ekonomi" },
   { value: "profesional", label: "Profesional", dotClass: "bg-sector-profesional" },
 ];
 

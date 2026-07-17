@@ -16,19 +16,19 @@ import { updateProfile, updateAvatar } from "@/actions/profile";
 
 const sectorOptions: { value: Sector; label: string; icon: string }[] = [
   { value: "pendidikan", label: "Pendidikan", icon: "school" },
-  { value: "pengusaha", label: "Ekonomi", icon: "storefront" },
+  { value: "ekonomi", label: "Ekonomi", icon: "storefront" },
   { value: "profesional", label: "Profesional", icon: "work" },
 ];
 
 const sectorIconClass: Record<Sector, string> = {
   pendidikan: "text-sector-pendidikan",
-  pengusaha: "text-sector-pengusaha",
+  ekonomi: "text-sector-ekonomi",
   profesional: "text-sector-profesional",
 };
 
 const sectorActiveCardClass: Record<Sector, string> = {
   pendidikan: "border-sector-pendidikan bg-sector-pendidikan/5 ring-1 ring-sector-pendidikan",
-  pengusaha: "border-sector-pengusaha bg-sector-pengusaha/5 ring-1 ring-sector-pengusaha",
+  ekonomi: "border-sector-ekonomi bg-sector-ekonomi/5 ring-1 ring-sector-ekonomi",
   profesional: "border-sector-profesional bg-sector-profesional/5 ring-1 ring-sector-profesional",
 };
 

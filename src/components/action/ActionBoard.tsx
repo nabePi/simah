@@ -24,7 +24,7 @@ const statusLabel: Record<ActionStatus, string> = {
 
 const sectorLabel: Record<Participant["sector"], string> = {
   pendidikan: "Pendidikan",
-  pengusaha: "Ekonomi",
+  ekonomi: "Ekonomi",
   profesional: "Profesional",
 };
 

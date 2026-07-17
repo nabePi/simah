@@ -47,7 +47,7 @@ export default async function ProfilePage() {
               initialWaNumber={initial.waNumber}
               initialSector={(initial.sector ?? "profesional") as
                 | "pendidikan"
-                | "pengusaha"
+                | "ekonomi"
                 | "profesional"}
               initialRole={initial.role ?? ""}
               initialOrganization={initial.organization ?? ""}

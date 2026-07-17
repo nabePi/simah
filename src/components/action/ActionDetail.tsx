@@ -26,15 +26,15 @@ const statusBadgeClass: Record<string, string> = {
 
 const sectorLabel: Record<string, string> = {
   pendidikan: "Pendidikan",
-  pengusaha: "Ekonomi",
+  ekonomi: "Ekonomi",
   profesional: "Profesional",
 };
 
 const sectorBadgeClass: Record<string, string> = {
   pendidikan:
     "bg-sector-pendidikan/10 text-sector-pendidikan border-sector-pendidikan/20",
-  pengusaha:
-    "bg-sector-pengusaha/10 text-sector-pengusaha border-sector-pengusaha/20",
+  ekonomi:
+    "bg-sector-ekonomi/10 text-sector-ekonomi border-sector-ekonomi/20",
   profesional:
     "bg-sector-profesional/10 text-sector-profesional border-sector-profesional/20",
 };
@@ -108,7 +108,7 @@ export function ActionDetail({
         ...creatorOverride,
         sector: (creatorOverride.sector ?? "pendidikan") as
           | "pendidikan"
-          | "pengusaha"
+          | "ekonomi"
           | "profesional",
         role: creatorOverride.role ?? "Peserta",
         organization: creatorOverride.organization ?? "-",

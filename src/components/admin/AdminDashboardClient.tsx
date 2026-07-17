@@ -98,7 +98,7 @@ export function AdminDashboardClient({
           id: u.id,
           name: u.name,
           waNumber: u.waNumber,
-          sector: (sector as "pendidikan" | "pengusaha" | "profesional") ?? null,
+          sector: (sector as "pendidikan" | "ekonomi" | "profesional") ?? null,
           role: "Peserta",
           organization: "-",
           skills: [],

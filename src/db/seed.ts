@@ -49,7 +49,7 @@ async function seed() {
     {
       name: "Budi Wijaya",
       waNumber: "081298765432",
-      sector: "pengusaha" as const,
+      sector: "ekonomi" as const,
       role: "Logistics & Supply Chain",
       organization: "PT Sinergi Logistik Nusantara",
       skills: ["Manajemen Distribusi", "Rantai Pasok", "Optimasi Armada"],

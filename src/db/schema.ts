@@ -13,7 +13,7 @@ import {
 
 export const sectorsEnum = pgEnum("sector", [
   "pendidikan",
-  "pengusaha",
+  "ekonomi",
   "profesional",
 ]);
 

@@ -83,14 +83,14 @@ export function ParticipantPhotoModal({
             className={`inline-flex items-center px-2.5 py-1 rounded-full font-label-sm text-label-sm border ${
               participant.sector === "pendidikan"
                 ? "bg-sector-pendidikan/10 text-sector-pendidikan border-sector-pendidikan/20"
-                : participant.sector === "pengusaha"
-                  ? "bg-sector-pengusaha/10 text-sector-pengusaha border-sector-pengusaha/20"
+                : participant.sector === "ekonomi"
+                ? "bg-sector-ekonomi/10 text-sector-ekonomi border-sector-ekonomi/20"
                   : "bg-sector-profesional/10 text-sector-profesional border-sector-profesional/20"
             }`}
           >
             {participant.sector === "pendidikan"
               ? "Pendidikan"
-                : participant.sector === "pengusaha"
+                : participant.sector === "ekonomi"
                 ? "Ekonomi"
                 : "Profesional"}
           </span>

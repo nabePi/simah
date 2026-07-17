@@ -29,7 +29,7 @@ export type Contribution = {
   name: string;
   role?: string;
   types: string[];
-  sector?: "pendidikan" | "pengusaha" | "profesional";
+  sector?: "pendidikan" | "ekonomi" | "profesional";
   avatarUrl?: string;
   initials?: string;
   organization?: string;

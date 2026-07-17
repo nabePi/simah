@@ -78,7 +78,7 @@ export async function importUsers(
   for (const row of valid) {
     const name = row.nama.trim();
     const waNumber = row.wa.trim();
-    const sector = row.sektor.trim() as "pendidikan" | "pengusaha" | "profesional";
+    const sector = row.sektor.trim() as "pendidikan" | "ekonomi" | "profesional";
     const defaultPassword = generateDefaultPassword(name, waNumber);
     const [inserted] = await db
       .insert(users)
@@ -234,7 +234,7 @@ export async function broadcastNotification(input: {
     const bySector = await db
       .select({ id: users.id })
       .from(users)
-      .where(eq(users.sector, input.sector as "pendidikan" | "pengusaha" | "profesional"));
+      .where(eq(users.sector, input.sector as "pendidikan" | "ekonomi" | "profesional"));
     targetIds = bySector.map((u) => u.id);
   } else if (input.targetType === "specific" && input.userId) {
     targetIds = [input.userId];

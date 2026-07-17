@@ -33,7 +33,7 @@ export default async function DirectoryPage() {
       name: u.name,
       sector: (u.sector ?? "profesional") as
         | "pendidikan"
-        | "pengusaha"
+        | "ekonomi"
         | "profesional",
       role: u.role ?? "Peserta",
       organization: u.organization ?? "-",

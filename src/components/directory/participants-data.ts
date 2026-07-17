@@ -1,4 +1,4 @@
-export type Sector = "pendidikan" | "pengusaha" | "profesional";
+export type Sector = "pendidikan" | "ekonomi" | "profesional";
 
 export type Participant = {
   id: string;

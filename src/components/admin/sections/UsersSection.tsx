@@ -27,7 +27,7 @@ type PendingAction = {
 const sectorOptions: (Sector | "all")[] = [
   "all",
   "pendidikan",
-  "pengusaha",
+  "ekonomi",
   "profesional",
 ];
 
@@ -379,8 +379,9 @@ function ImportCsvInline({
         setRows([]);
         return;
       }
-      const validSectors = ["pendidikan", "pengusaha", "profesional"];
-      const sectorAliases: Record<string, string> = { ekonomi: "pengusaha" };
+      const validSectors = ["pendidikan", "ekonomi", "profesional"];
+      const sectorAliases: Record<string, string> = {};
+
       const parsed = lines.slice(1).map((line) => {
         const cols = line.split(",").map((c) => c.trim());
         const rawSektor = (cols[sektorIdx] ?? "").toLowerCase();

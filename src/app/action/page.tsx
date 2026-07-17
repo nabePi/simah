@@ -57,7 +57,7 @@ export default async function ActionPage() {
             name: row.creatorName,
             sector: (row.creatorSector ?? "profesional") as
               | "pendidikan"
-              | "pengusaha"
+              | "ekonomi"
               | "profesional",
             role: "",
             organization: "-",
