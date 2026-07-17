@@ -464,7 +464,7 @@ export function ActionDetail({
       </Wrapper>
 
       {!embedded && (
-        <div className="fixed bottom-[4rem] left-0 w-full p-3 bg-surface/95 backdrop-blur-md border-t border-outline-variant/20 z-40 md:bottom-6 md:left-auto md:right-6 md:w-auto md:p-0 md:bg-transparent md:border-0 md:backdrop-blur-none">
+        <div className="fixed bottom-0 left-0 w-full px-3 pt-3 pb-[4.25rem] bg-surface backdrop-blur-md border-t border-outline-variant/20 z-40 md:bottom-6 md:left-auto md:right-6 md:w-auto md:p-0 md:bg-transparent md:border-0 md:backdrop-blur-none">
           <button
             type="button"
             className="relative w-full md:w-auto h-touch-target md:px-6 bg-primary text-on-primary font-label-md text-label-md rounded-xl md:rounded-full flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-md md:shadow-lg md:animate-pulse-ring md:hover:animate-none"
