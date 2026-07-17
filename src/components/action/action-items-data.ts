@@ -33,6 +33,8 @@ export type Contribution = {
   avatarUrl?: string;
   initials?: string;
   organization?: string;
+  skills?: string[];
+  offering?: string;
 };
 
 export type DraftItem = {

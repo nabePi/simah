@@ -85,6 +85,8 @@ export function ActionDetail({
     initials?: string;
     role?: string;
     organization?: string;
+    skills?: string[];
+    offering?: string;
   };
   manifestasi?: {
     poin: string;
@@ -112,8 +114,8 @@ export function ActionDetail({
           | "profesional",
         role: creatorOverride.role ?? "Peserta",
         organization: creatorOverride.organization ?? "-",
-        offering: "",
-        skills: [] as string[],
+        offering: creatorOverride.offering ?? "",
+        skills: creatorOverride.skills ?? [],
       }
     : undefined;
 
@@ -382,10 +384,10 @@ export function ActionDetail({
                             sector: contribution.sector,
                             role: contribution.role ?? "",
                             organization: contribution.organization ?? "-",
-                            skills: [],
+                            skills: contribution.skills ?? [],
                             avatarUrl: contribution.avatarUrl,
                             initials: contribution.initials,
-                            offering: "",
+                            offering: contribution.offering ?? "",
                           }
                         : null;
                     return (

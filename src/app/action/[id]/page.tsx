@@ -56,6 +56,8 @@ export default async function ActionDetailPage({
     avatarUrl: c.avatarUrl ?? undefined,
     initials: c.initials ?? undefined,
     organization: c.organization ?? undefined,
+    skills: c.skills ?? undefined,
+    offering: c.offering ?? undefined,
   }));
   const creator = actionRow.creator;
   const creatorOverride = creator
@@ -71,6 +73,8 @@ export default async function ActionDetailPage({
         initials: creator.initials ?? undefined,
         role: creator.role ?? undefined,
         organization: creator.organization ?? undefined,
+        skills: creator.skills ?? undefined,
+        offering: creator.offering ?? undefined,
       }
     : undefined;
   const item = {

@@ -25,6 +25,10 @@ export default async function ActionPage() {
       creatorAvatarUrl: users.avatarUrl,
       creatorInitials: users.initials,
       creatorSector: users.sector,
+      creatorRole: users.role,
+      creatorOrganization: users.organization,
+      creatorSkills: users.skills,
+      creatorOffering: users.offering,
       manifestasiPoin: manifestasiIwa.poin,
     })
     .from(actions)
@@ -59,12 +63,12 @@ export default async function ActionPage() {
               | "pendidikan"
               | "ekonomi"
               | "profesional",
-            role: "",
-            organization: "-",
-            skills: [],
+            role: row.creatorRole ?? "",
+            organization: row.creatorOrganization ?? "-",
+            skills: row.creatorSkills ?? [],
             avatarUrl: avatarUrlToSrc(row.creatorAvatarUrl),
             initials: row.creatorInitials ?? undefined,
-            offering: "",
+            offering: row.creatorOffering ?? "",
           }
         : undefined,
     };

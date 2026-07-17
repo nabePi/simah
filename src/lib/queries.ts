@@ -39,6 +39,8 @@ export type ActionDetail = {
     sector: string | null;
     role: string | null;
     organization: string | null;
+    skills: string[];
+    offering: string;
   } | null;
 };
 
@@ -55,6 +57,8 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
           sector: users.sector,
           role: users.role,
           organization: users.organization,
+          skills: users.skills,
+          offering: users.offering,
         })
         .from(users)
         .where(eq(users.id, row.createdById))
@@ -81,7 +85,7 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
     isPublished: row.isPublished,
     manifestasiId: row.manifestasiId,
     breakdownId: row.breakdownId,
-    creator: creator
+      creator: creator
       ? {
           id: creator.id,
           name: creator.name,
@@ -90,6 +94,8 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
           sector: creator.sector,
           role: creator.role,
           organization: creator.organization,
+          skills: creator.skills ?? [],
+          offering: creator.offering ?? "",
         }
       : null,
   };
@@ -117,6 +123,8 @@ export async function fetchContributionsForAction(actionId: number) {
       role: users.role,
       sector: users.sector,
       organization: users.organization,
+      skills: users.skills,
+      offering: users.offering,
     })
     .from(contributions)
     .innerJoin(users, eq(users.id, contributions.participantId))
@@ -132,6 +140,8 @@ export async function fetchContributionsForAction(actionId: number) {
     role: r.role,
     sector: r.sector,
     organization: r.organization,
+    skills: r.skills,
+    offering: r.offering,
   }));
 }
 
