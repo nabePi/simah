@@ -12,6 +12,20 @@ export const metadata: Metadata = {
   title: "Simah | Aksi, Sinergi, Berdaya",
   description:
     "Simah - Aksi, Sinergi, Berdaya. Minal Aqwal Ilal Af'al - Dari Narasi menuju Aksi",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Simah",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icon-192.png", sizes: "192x192" }],
+  },
 };
 
 export const viewport: Viewport = {
@@ -19,6 +33,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  themeColor: "#004ac6",
 };
 
 export default function RootLayout({
