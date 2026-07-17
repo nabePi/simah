@@ -45,13 +45,13 @@ export function HomeBoard({
     {
       label: "Action Saya",
       value: data.stats.actions,
-      href: "/action",
+      href: "/action?scope=created",
       icon: "assignment_turned_in",
     },
     {
       label: "Kontribusi",
       value: data.stats.contributions,
-      href: "/action",
+      href: "/action?scope=contributed",
       icon: "volunteer_activism",
     },
   ];
