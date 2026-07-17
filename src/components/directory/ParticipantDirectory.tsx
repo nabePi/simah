@@ -29,6 +29,8 @@ export function ParticipantDirectory({
 }: ParticipantDirectoryProps) {
   const [query, setQuery] = useState("");
   const [sector, setSector] = useState<Sector | "all">("all");
+  const [onlyConnected, setOnlyConnected] = useState(false);
+  const [onlyPending, setOnlyPending] = useState(false);
   const [selectedParticipant, setSelectedParticipant] =
     useState<Participant | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(
@@ -82,9 +84,23 @@ export function ParticipantDirectory({
         `${participant.name} ${participant.role} ${participant.organization} ${participant.skills.join(" ")} ${participant.offering}`
           .toLowerCase()
           .includes(normalizedQuery);
-      return matchesSector && matchesQuery;
+      const matchesConnected = !onlyConnected || connectedIds.has(participant.id);
+      const matchesPending =
+        !onlyPending ||
+        pendingIds.has(participant.id) ||
+        incomingRequests.has(participant.id);
+      return matchesSector && matchesQuery && matchesConnected && matchesPending;
     });
-  }, [participants, query, sector]);
+  }, [
+    participants,
+    query,
+    sector,
+    onlyConnected,
+    connectedIds,
+    onlyPending,
+    pendingIds,
+    incomingRequests,
+  ]);
 
   return (
     <div className="flex flex-col gap-stack-lg">
@@ -131,6 +147,31 @@ export function ParticipantDirectory({
               </button>
             );
           })}
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          <button
+            className={
+              onlyConnected
+                ? "px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap bg-on-surface text-on-primary shadow-sm transition-colors flex items-center gap-2"
+                : "px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap bg-surface text-on-surface border border-outline-variant hover:bg-surface-container-low transition-colors flex items-center gap-2"
+            }
+            onClick={() => setOnlyConnected((current) => !current)}
+          >
+            <Icon name="how_to_reg" className="text-[16px]" />
+            Koneksi Saya
+          </button>
+          <button
+            className={
+              onlyPending
+                ? "px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap bg-on-surface text-on-primary shadow-sm transition-colors flex items-center gap-2"
+                : "px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap bg-surface text-on-surface border border-outline-variant hover:bg-surface-container-low transition-colors flex items-center gap-2"
+            }
+            onClick={() => setOnlyPending((current) => !current)}
+          >
+            <Icon name="schedule" className="text-[16px]" />
+            Koneksi Pending
+          </button>
         </div>
       </div>
 
