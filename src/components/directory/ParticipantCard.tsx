@@ -129,10 +129,23 @@ export function ParticipantCard({
 
       <div className="mt-auto pt-2 flex gap-2">
         {connected ? (
-          <div className="flex-1 py-2 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 bg-secondary/10 text-secondary border border-secondary/20">
-            <Icon name="check_circle" filled className="text-[18px]" />
-            Terhubung
-          </div>
+          <>
+            <div className="flex-1 py-2 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 bg-secondary/10 text-secondary border border-secondary/20">
+              <Icon name="check_circle" filled className="text-[18px]" />
+              Terhubung
+            </div>
+            {participant.whatsappUrl && (
+              <a
+                href={participant.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-2 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 bg-[#25D366]/10 text-[#128C7E] border border-[#25D366]/30 hover:bg-[#25D366]/20 transition-colors active:scale-95"
+              >
+                <Icon name="chat" filled className="text-[18px]" />
+                WhatsApp
+              </a>
+            )}
+          </>
         ) : (
           <button
             type="button"

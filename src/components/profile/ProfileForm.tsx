@@ -43,6 +43,7 @@ type ProfileFormProps = {
   initialOrganization: string;
   initialSkills: string[];
   initialOffering: string;
+  initialShowWhatsapp: boolean;
   initialAvatarUrl?: string;
 };
 
@@ -54,6 +55,7 @@ export function ProfileForm({
   initialOrganization,
   initialSkills,
   initialOffering,
+  initialShowWhatsapp,
   initialAvatarUrl,
 }: ProfileFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -66,6 +68,7 @@ export function ProfileForm({
   const [skills, setSkills] = useState<string[]>(initialSkills);
   const [skillInput, setSkillInput] = useState("");
   const [offering, setOffering] = useState(initialOffering);
+  const [showWhatsapp, setShowWhatsapp] = useState(initialShowWhatsapp);
   const [showSuccess, setShowSuccess] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -118,6 +121,7 @@ export function ProfileForm({
         organization,
         skills,
         offering,
+        showWhatsapp,
       });
       if (res?.error) {
         alert(res.error);
@@ -209,6 +213,37 @@ export function ProfileForm({
         <p className="font-caption text-caption text-on-surface-variant/70">
           Nama lengkap dan nomor WhatsApp terhubung dengan akun Anda dan tidak dapat diubah.
         </p>
+
+        <div className="flex items-center justify-between gap-4 p-4 rounded-lg border border-outline-variant bg-surface">
+          <div className="flex flex-col gap-0.5">
+            <label
+              className="font-label-md text-label-md text-on-surface"
+              htmlFor="showWhatsapp"
+            >
+              Tampilkan nomor WhatsApp
+            </label>
+            <p className="font-caption text-caption text-on-surface-variant/70">
+              Jika aktif, peserta yang sudah terhubung dengan Anda dapat melihat dan
+              menghubungi nomor WhatsApp Anda di Direktori Peserta.
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            id="showWhatsapp"
+            aria-checked={showWhatsapp}
+            onClick={() => setShowWhatsapp((current) => !current)}
+            className={`shrink-0 relative w-10 h-6 rounded-full transition-colors ${
+              showWhatsapp ? "bg-primary" : "bg-surface-variant"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface shadow-sm transition-transform ${
+                showWhatsapp ? "translate-x-4" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       <fieldset>

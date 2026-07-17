@@ -52,6 +52,7 @@ export const users = pgTable("users", {
   avatarUrl: text("avatar_url"),
   initials: text("initials"),
   offering: text("offering").default(""),
+  showWhatsapp: boolean("show_whatsapp").default(false).notNull(),
   status: userStatusEnum("status").default("active").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

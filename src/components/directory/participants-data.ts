@@ -10,4 +10,5 @@ export type Participant = {
   avatarUrl?: string;
   initials?: string;
   offering: string;
+  whatsappUrl?: string;
 };

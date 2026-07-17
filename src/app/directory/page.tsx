@@ -9,6 +9,7 @@ import { users, connections } from "@/db/schema";
 import { eq, and, or } from "drizzle-orm";
 import { auth } from "@/auth/config";
 import { avatarUrlToSrc } from "@/lib/avatar";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Direktori Peserta - Simah | Aksi, Sinergi, Berdaya",
@@ -27,22 +28,8 @@ export default async function DirectoryPage() {
     .from(users)
     .where(eq(users.status, "active"));
 
-  const participants = allUsers
-    .filter((u) => !Number.isNaN(currentUserId) && u.id !== currentUserId)
-    .map((u) => ({
-      id: String(u.id),
-      name: u.name,
-      sector: (u.sector ?? "profesional") as
-        | "pendidikan"
-        | "ekonomi"
-        | "profesional",
-      role: u.role ?? "Peserta",
-      organization: u.organization ?? "-",
-      skills: u.skills ?? [],
-      avatarUrl: avatarUrlToSrc(u.avatarUrl),
-      initials: u.initials ?? undefined,
-      offering: u.offering ?? "",
-    }));
+  const currentUser = allUsers.find((u) => u.id === currentUserId);
+  const currentUserName = currentUser?.name ?? "";
 
   let initialPendingIds: string[] = [];
   let initialIncomingRequests: { participantId: string; connectionId: number }[] = [];
@@ -92,6 +79,29 @@ export default async function DirectoryPage() {
       String(c.requesterId === currentUserId ? c.requesteeId : c.requesterId),
     );
   }
+
+  const connectedIdSet = new Set(initialConnectedIds);
+
+  const participants = allUsers
+    .filter((u) => !Number.isNaN(currentUserId) && u.id !== currentUserId)
+    .map((u) => ({
+      id: String(u.id),
+      name: u.name,
+      sector: (u.sector ?? "profesional") as
+        | "pendidikan"
+        | "ekonomi"
+        | "profesional",
+      role: u.role ?? "Peserta",
+      organization: u.organization ?? "-",
+      skills: u.skills ?? [],
+      avatarUrl: avatarUrlToSrc(u.avatarUrl),
+      initials: u.initials ?? undefined,
+      offering: u.offering ?? "",
+      whatsappUrl:
+        u.showWhatsapp && connectedIdSet.has(String(u.id))
+          ? buildWhatsAppLink(u.waNumber, u.name, currentUserName)
+          : undefined,
+    }));
 
   return (
     <>

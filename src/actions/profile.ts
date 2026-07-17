@@ -22,6 +22,7 @@ export async function updateProfile(input: {
   organization: string;
   skills: string[];
   offering: string;
+  showWhatsapp: boolean;
 }): Promise<{ error?: string }> {
   const { userId } = await requireUser();
   await db
@@ -32,6 +33,7 @@ export async function updateProfile(input: {
       organization: input.organization,
       skills: input.skills,
       offering: input.offering,
+      showWhatsapp: input.showWhatsapp,
       updatedAt: new Date(),
     })
     .where(eq(users.id, userId));

@@ -53,6 +53,7 @@ export default async function ProfilePage() {
               initialOrganization={initial.organization ?? ""}
               initialSkills={initial.skills ?? []}
               initialOffering={initial.offering ?? ""}
+              initialShowWhatsapp={initial.showWhatsapp}
               initialAvatarUrl={avatarUrlToSrc(initial.avatarUrl)}
             />
           )}
