@@ -12,6 +12,10 @@ export type NotificationItem = {
   actorAvatarUrl?: string;
   actorInitials?: string;
   actorSector?: "pendidikan" | "ekonomi" | "profesional";
+  actorRole?: string;
+  actorOrganization?: string;
+  actorSkills?: string[];
+  actorOffering?: string;
   connectionId?: number;
   variant?: "alert" | "info";
 };

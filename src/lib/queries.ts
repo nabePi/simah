@@ -238,6 +238,10 @@ export async function fetchNotificationsForUser(userId: number) {
       actorAvatarUrl: users.avatarUrl,
       actorInitials: users.initials,
       actorSector: users.sector,
+      actorRole: users.role,
+      actorOrganization: users.organization,
+      actorSkills: users.skills,
+      actorOffering: users.offering,
     })
     .from(notifications)
     .leftJoin(users, eq(users.id, notifications.actorId))
@@ -281,6 +285,10 @@ export async function fetchNotificationsForUser(userId: number) {
       | "ekonomi"
       | "profesional"
       | undefined,
+    actorRole: r.actorRole ?? undefined,
+    actorOrganization: r.actorOrganization ?? undefined,
+    actorSkills: r.actorSkills ?? undefined,
+    actorOffering: r.actorOffering ?? undefined,
     connectionId:
       r.type === "connect_request" && r.actorId
         ? connByRequester.get(r.actorId)
