@@ -39,7 +39,7 @@ export function HomeBoard({
     {
       label: "Koneksi",
       value: data.stats.connections,
-      href: "/directory",
+      href: "/directory?koneksi=saya",
       icon: "groups",
     },
     {

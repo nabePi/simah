@@ -29,7 +29,7 @@ export function ConnectionsSection({
           </h2>
         </div>
         <Link
-          href="/directory"
+          href="/directory?koneksi=saya"
           className="font-label-sm text-label-sm text-primary hover:underline"
         >
           Lihat Semua

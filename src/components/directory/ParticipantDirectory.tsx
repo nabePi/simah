@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { ParticipantCard } from "./ParticipantCard";
 import { ParticipantPhotoModal } from "./ParticipantPhotoModal";
@@ -27,9 +28,11 @@ export function ParticipantDirectory({
   initialIncomingRequests = [],
   initialConnectedIds = [],
 }: ParticipantDirectoryProps) {
+  const searchParams = useSearchParams();
+  const startConnected = searchParams.get("koneksi") === "saya";
   const [query, setQuery] = useState("");
   const [sector, setSector] = useState<Sector | "all">("all");
-  const [onlyConnected, setOnlyConnected] = useState(false);
+  const [onlyConnected, setOnlyConnected] = useState(startConnected);
   const [onlyPending, setOnlyPending] = useState(false);
   const [selectedParticipant, setSelectedParticipant] =
     useState<Participant | null>(null);
