@@ -36,6 +36,8 @@ export function NotificationsSection({
   const [variant, setVariant] = useState<"alert" | "info">("info");
   const [submitting, setSubmitting] = useState(false);
 
+  const broadcasts = notifications.filter((n) => n.type === "broadcast");
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!judul.trim() || !body.trim()) return;
@@ -230,9 +232,9 @@ export function NotificationsSection({
 
       <div className="flex flex-col gap-2">
         <h3 className="font-headline-sm text-headline-sm text-on-surface">
-          Riwayat ({notifications.length})
+          Riwayat ({broadcasts.length})
         </h3>
-        {notifications.map((notif) => {
+        {broadcasts.map((notif) => {
           const isAlert = notif.type === "broadcast" && notif.variant === "alert";
           return (
             <div
@@ -273,7 +275,7 @@ export function NotificationsSection({
             </div>
           );
         })}
-        {notifications.length === 0 && (
+        {broadcasts.length === 0 && (
           <div className="glass-card rounded-xl p-8 text-center text-on-surface-variant font-body-md">
             Belum ada notifikasi terkirim.
           </div>
