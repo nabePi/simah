@@ -3,6 +3,7 @@ import { TopAppBar } from "@/components/layout/TopAppBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { BottomNavBar } from "@/components/layout/BottomNavBar";
 import { ActionBoard } from "@/components/action/ActionBoard";
+import { ProfileCompletenessBanner } from "@/components/profile/ProfileCompletenessBanner";
 import { db } from "@/db";
 import { actions, votes, users, manifestasiIwa, contributions } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
@@ -126,6 +127,7 @@ export default async function ActionPage() {
       <Sidebar />
       <main className="flex-grow py-stack-md pb-24 md:pb-6 md:pl-64">
         <div className="px-container-margin flex flex-col gap-stack-lg max-w-4xl mx-auto w-full md:max-w-6xl">
+          <ProfileCompletenessBanner />
           <ActionBoard
             items={actionItemsWithContributors}
             initialVotedIds={initialVotedIds}
