@@ -76,29 +76,62 @@ export async function importUsers(
 
   const created: ImportedUser[] = [];
   for (const row of valid) {
-    const name = row.nama.trim();
-    const waNumber = row.wa.trim();
-    const sector = row.sektor.trim() as "pendidikan" | "ekonomi" | "profesional";
-    const defaultPassword = generateDefaultPassword(name, waNumber);
-    const [inserted] = await db
-      .insert(users)
-      .values({
-        name,
-        waNumber,
-        sector,
-        passwordHash: await hashPassword(defaultPassword),
-        initials: generateInitials(name),
-        role: "Peserta",
-        organization: "-",
-        offering: "",
-      })
-      .returning({ id: users.id });
-    if (inserted) {
-      created.push({ id: inserted.id, name, waNumber, defaultPassword });
+    const result = await createSingleUser(row);
+    if (result.user) {
+      created.push(result.user);
     }
   }
   revalidatePath("/admin/dashboard");
   return { users: created };
+}
+
+async function createSingleUser(row: {
+  nama: string;
+  wa: string;
+  sektor: string;
+}): Promise<{ user?: ImportedUser; error?: string }> {
+  const name = row.nama.trim();
+  const waNumber = row.wa.trim();
+  const sector = row.sektor.trim() as "pendidikan" | "ekonomi" | "profesional";
+  const defaultPassword = generateDefaultPassword(name, waNumber);
+  const [inserted] = await db
+    .insert(users)
+    .values({
+      name,
+      waNumber,
+      sector,
+      passwordHash: await hashPassword(defaultPassword),
+      initials: generateInitials(name),
+      role: "Peserta",
+      organization: "-",
+      offering: "",
+    })
+    .returning({ id: users.id });
+  if (!inserted) {
+    return { error: "Gagal membuat user." };
+  }
+  return { user: { id: inserted.id, name, waNumber, defaultPassword } };
+}
+
+export async function createUser(
+  input: { nama: string; wa: string; sektor: string }
+): Promise<{ user?: ImportedUser; error?: string }> {
+  await requireAdminSession();
+
+  const validSectors = ["pendidikan", "ekonomi", "profesional"];
+  const name = input.nama?.trim() ?? "";
+  const waNumber = input.wa?.trim() ?? "";
+  const sector = input.sektor?.trim().toLowerCase() ?? "";
+
+  if (!name) return { error: "Nama lengkap wajib diisi." };
+  if (!waNumber) return { error: "No WhatsApp wajib diisi." };
+  if (!validSectors.includes(sector)) return { error: "Sektor tidak valid." };
+
+  const result = await createSingleUser({ nama: name, wa: waNumber, sektor: sector });
+  if (result.user) {
+    revalidatePath("/admin/dashboard");
+  }
+  return result;
 }
 
 export async function toggleBlockUser(id: number): Promise<{ error?: string }> {

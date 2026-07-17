@@ -17,6 +17,7 @@ type Props = {
   onToggleBlock: (id: number) => void;
   onDelete: (id: number) => void;
   onImport: (rows: { nama: string; wa: string; sektor: string }[]) => void;
+  onAddUser: (input: { nama: string; wa: string; sektor: string }) => void;
 };
 
 type PendingAction = {
@@ -36,8 +37,10 @@ export function UsersSection({
   onToggleBlock,
   onDelete,
   onImport,
+  onAddUser,
 }: Props) {
   const [showImport, setShowImport] = useState(false);
+  const [showAddUser, setShowAddUser] = useState(false);
   const [query, setQuery] = useState("");
   const [sectorFilter, setSectorFilter] = useState<Sector | "all">("all");
   const [detailUser, setDetailUser] = useState<AdminUserRow | null>(null);
@@ -70,14 +73,24 @@ export function UsersSection({
             {filtered.length} dari {users.length} user. Kelola status.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowImport(true)}
-          className="inline-flex items-center gap-2 h-10 px-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 active:scale-[0.98] transition-all"
-        >
-          <Icon name="upload" className="text-[20px]" />
-          Import CSV
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowAddUser(true)}
+            className="inline-flex items-center gap-2 h-10 px-4 bg-secondary text-on-secondary font-label-md text-label-md rounded-lg hover:bg-secondary/90 active:scale-[0.98] transition-all"
+          >
+            <Icon name="person_add" className="text-[20px]" />
+            Tambah User
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowImport(true)}
+            className="inline-flex items-center gap-2 h-10 px-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 active:scale-[0.98] transition-all"
+          >
+            <Icon name="upload" className="text-[20px]" />
+            Import CSV
+          </button>
+        </div>
       </div>
 
       <div className="glass-card rounded-2xl p-4 flex flex-col sm:flex-row gap-3">
@@ -230,6 +243,16 @@ export function UsersSection({
           onSubmit={(rows) => {
             onImport(rows);
             setShowImport(false);
+          }}
+        />
+      )}
+
+      {showAddUser && (
+        <AddUserModal
+          onClose={() => setShowAddUser(false)}
+          onSubmit={(input) => {
+            onAddUser(input);
+            setShowAddUser(false);
           }}
         />
       )}
@@ -591,6 +614,160 @@ function ConfirmActionModal({
             {confirmLabel}
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function AddUserModal({
+  onClose,
+  onSubmit,
+}: {
+  onClose: () => void;
+  onSubmit: (input: { nama: string; wa: string; sektor: string }) => void;
+}) {
+  const [form, setForm] = useState({
+    nama: "",
+    wa: "",
+    sektor: "",
+  });
+  const [error, setError] = useState<string | null>(null);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+
+    const name = form.nama.trim();
+    const waNumber = form.wa.trim();
+    const sector = form.sektor.trim().toLowerCase();
+    const validSectors = ["pendidikan", "ekonomi", "profesional"];
+
+    if (!name) {
+      setError("Nama lengkap wajib diisi.");
+      return;
+    }
+    if (!waNumber) {
+      setError("No WhatsApp wajib diisi.");
+      return;
+    }
+    if (!validSectors.includes(sector)) {
+      setError("Pilih sektor yang valid.");
+      return;
+    }
+
+    onSubmit({ nama: name, wa: waNumber, sektor: sector });
+  }
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="add-user-title"
+      onClick={onClose}
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-on-background/60 p-6"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-surface rounded-2xl p-6 max-w-md w-full flex flex-col gap-4 shadow-2xl"
+      >
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+            <Icon name="person_add" filled className="text-[22px]" />
+          </div>
+          <div className="flex-1">
+            <h3
+              id="add-user-title"
+              className="font-headline-sm text-headline-sm text-on-surface"
+            >
+              Tambah User Baru
+            </h3>
+            <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+              User akan dibuat dengan password default dan mengisi profil setelah login.
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="add-user-name"
+              className="font-label-sm text-label-sm text-on-surface-variant"
+            >
+              Nama Lengkap
+            </label>
+            <input
+              id="add-user-name"
+              type="text"
+              value={form.nama}
+              onChange={(e) => setForm((f) => ({ ...f, nama: e.target.value }))}
+              placeholder="Masukkan nama lengkap"
+              className="w-full px-4 py-3 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors placeholder:text-outline/50"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="add-user-wa"
+              className="font-label-sm text-label-sm text-on-surface-variant"
+            >
+              No WhatsApp
+            </label>
+            <input
+              id="add-user-wa"
+              type="text"
+              inputMode="tel"
+              value={form.wa}
+              onChange={(e) => setForm((f) => ({ ...f, wa: e.target.value }))}
+              placeholder="Contoh: 08123456789"
+              className="w-full px-4 py-3 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors placeholder:text-outline/50"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="add-user-sector"
+              className="font-label-sm text-label-sm text-on-surface-variant"
+            >
+              Sektor
+            </label>
+            <select
+              id="add-user-sector"
+              value={form.sektor}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, sektor: e.target.value }))
+              }
+              className="w-full px-4 py-3 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors appearance-none"
+            >
+              <option value="">Pilih sektor</option>
+              <option value="pendidikan">Pendidikan</option>
+              <option value="ekonomi">Ekonomi</option>
+              <option value="profesional">Profesional</option>
+            </select>
+          </div>
+
+          {error && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-error-container text-on-error-container rounded-lg font-body-sm text-body-sm">
+              <Icon name="error" filled className="text-[18px]" />
+              {error}
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-10 px-4 rounded-lg font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="h-10 px-4 rounded-lg font-label-md text-label-md bg-primary text-on-primary hover:bg-primary/90 transition-colors"
+            >
+              Simpan
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

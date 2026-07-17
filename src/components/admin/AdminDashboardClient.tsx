@@ -7,6 +7,7 @@ import type { NotificationItem } from "@/components/notifications/notifications-
 import type { AdminUserRow, AdminActionRow } from "@/actions/admin";
 import {
   importUsers,
+  createUser,
   toggleBlockUser,
   deleteUser,
   updateActionStatus,
@@ -94,27 +95,51 @@ export function AdminDashboardClient({
     if (res.users && res.users.length > 0) {
       const newRows: AdminUserRow[] = res.users.map((u) => {
         const sector = rows.find((r) => r.nama.trim() === u.name)?.sektor;
-        return {
-          id: u.id,
-          name: u.name,
-          waNumber: u.waNumber,
-          sector: (sector as "pendidikan" | "ekonomi" | "profesional") ?? null,
-          role: "Peserta",
-          organization: "-",
-          skills: [],
-          avatarUrl: null,
-          initials: u.name
-            .split(" ")
-            .map((p) => p[0])
-            .slice(0, 2)
-            .join("")
-            .toUpperCase(),
-          status: "active",
-        };
+        return buildAdminRow(u, sector);
       });
       setUsersList((prev) => [...prev, ...newRows]);
       setImportedPasswords(res.users);
     }
+  }
+
+  async function handleAddUser(input: {
+    nama: string;
+    wa: string;
+    sektor: string;
+  }) {
+    const res = await createUser(input);
+    if (res?.error) {
+      alert(res.error);
+      return;
+    }
+    if (res.user) {
+      const newUser = res.user;
+      setUsersList((prev) => [...prev, buildAdminRow(newUser, input.sektor)]);
+      setImportedPasswords([newUser]);
+    }
+  }
+
+  function buildAdminRow(
+    user: ImportedUser,
+    sector: string | undefined
+  ): AdminUserRow {
+    return {
+      id: user.id,
+      name: user.name,
+      waNumber: user.waNumber,
+      sector: (sector as "pendidikan" | "ekonomi" | "profesional") ?? null,
+      role: "Peserta",
+      organization: "-",
+      skills: [],
+      avatarUrl: null,
+      initials: user.name
+        .split(" ")
+        .map((p) => p[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase(),
+      status: "active",
+    };
   }
 
   function handleChangeActionStatus(id: number, status: "todo" | "in_progress" | "done") {
@@ -199,6 +224,7 @@ export function AdminDashboardClient({
           onToggleBlock={handleToggleBlock}
           onDelete={handleDeleteUser}
           onImport={handleImport}
+          onAddUser={handleAddUser}
         />
       )}
       {activeTab === "actions" && (
