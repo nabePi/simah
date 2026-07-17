@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: simah-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://simah:simah@postgres:5432/simah
+      AUTH_SECRET: ${AUTH_SECRET}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_BUCKET: ${R2_BUCKET}
+      OPENAI_KEY: ${OPENAI_KEY}
+    depends_on:
+      - postgres
+    networks:
+      - simah-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: simah-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: simah
+      POSTGRES_PASSWORD: simah
+      POSTGRES_DB: simah
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - simah-network
+
+volumes:
+  postgres-data:
+
+networks:
+  simah-network:
+    driver: bridge
