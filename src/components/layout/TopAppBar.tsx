@@ -7,6 +7,7 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { avatarUrlToSrc } from "@/lib/avatar";
 import { UserMenu } from "./UserMenu";
+import { NotificationBell } from "./NotificationBell";
 
 type TopAppBarProps = {
   hideNotifications?: boolean;
@@ -49,19 +50,7 @@ export async function TopAppBar({ hideNotifications = false }: TopAppBarProps) {
       </Link>
       {!hideNotifications && (
         <div className="flex items-center gap-1">
-          <Link
-            href="/notifications"
-            aria-label="Notifikasi"
-            className="flex items-center gap-2 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 duration-200 rounded-full p-1 cursor-pointer relative"
-          >
-            <Icon
-              name="notifications"
-              className="text-on-surface-variant dark:text-outline-variant"
-            />
-            {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full border border-surface" />
-            )}
-          </Link>
+          <NotificationBell initialUnreadCount={unreadCount} />
           {currentUser && (
             <UserMenu name={currentUser.name} avatarUrl={currentUser.avatarUrl} />
           )}
