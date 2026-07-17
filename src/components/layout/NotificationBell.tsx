@@ -20,11 +20,24 @@ export function NotificationBell({ initialUnreadCount }: NotificationBellProps) 
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
 
   useEffect(() => {
-    const id = setInterval(async () => {
+    async function refresh() {
       const count = await getUnreadNotificationCount();
       setUnreadCount(count);
-    }, POLL_INTERVAL_MS);
-    return () => clearInterval(id);
+    }
+
+    const id = setInterval(refresh, POLL_INTERVAL_MS);
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") refresh();
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", refresh);
+
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", refresh);
+    };
   }, []);
 
   useEffect(() => {
