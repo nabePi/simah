@@ -102,7 +102,6 @@ async function createSingleUser(row: {
       sector,
       passwordHash: await hashPassword(defaultPassword),
       initials: generateInitials(name),
-      role: "Peserta",
       organization: "-",
       offering: "",
     })
