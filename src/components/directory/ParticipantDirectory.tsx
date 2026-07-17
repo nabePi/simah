@@ -84,12 +84,14 @@ export function ParticipantDirectory({
         `${participant.name} ${participant.role} ${participant.organization} ${participant.skills.join(" ")} ${participant.offering}`
           .toLowerCase()
           .includes(normalizedQuery);
-      const matchesConnected = !onlyConnected || connectedIds.has(participant.id);
-      const matchesPending =
-        !onlyPending ||
-        pendingIds.has(participant.id) ||
-        incomingRequests.has(participant.id);
-      return matchesSector && matchesQuery && matchesConnected && matchesPending;
+      const isConnected = connectedIds.has(participant.id);
+      const isPending =
+        pendingIds.has(participant.id) || incomingRequests.has(participant.id);
+      const matchesStatus =
+        (!onlyConnected && !onlyPending) ||
+        (onlyConnected && isConnected) ||
+        (onlyPending && isPending);
+      return matchesSector && matchesQuery && matchesStatus;
     });
   }, [
     participants,
