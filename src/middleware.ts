@@ -27,6 +27,7 @@ export default auth((req) => {
     if (!isAdmin) {
       return NextResponse.redirect(new URL("/admin/login", req.url));
     }
+    return NextResponse.next();
   }
 
   if (isAdmin) {
