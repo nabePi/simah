@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { changePassword } from "@/actions/auth";
 
@@ -10,11 +11,13 @@ const inputClass =
   "w-full h-touch-target pl-10 pr-4 bg-surface rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm text-on-surface placeholder:text-outline transition-colors outline-none";
 
 export function ChangePasswordForm() {
+  const router = useRouter();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const [pending, startTransition] = useTransition();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -39,6 +42,8 @@ export function ChangePasswordForm() {
       const result = await changePassword(formData);
       if (result?.error) {
         setError(result.error);
+      } else if (result?.success) {
+        setSuccess(true);
       }
     });
   }
@@ -138,6 +143,39 @@ export function ChangePasswordForm() {
           </>
         )}
       </button>
+
+      {success && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="password-success-title"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-on-background/60 p-6"
+        >
+          <div className="bg-surface rounded-2xl p-6 max-w-sm w-full flex flex-col gap-4 shadow-2xl text-center">
+            <div className="w-14 h-14 rounded-full bg-success-container text-on-success-container flex items-center justify-center mx-auto">
+              <Icon name="check_circle" filled className="text-[32px]" />
+            </div>
+            <div>
+              <h3
+                id="password-success-title"
+                className="font-headline-sm text-headline-sm text-on-surface"
+              >
+                Password Berhasil Diperbarui
+              </h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant mt-2">
+                Silakan login kembali dengan password baru Anda.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => router.push("/login")}
+              className="w-full h-touch-target bg-primary text-on-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 transition-all active:scale-95"
+            >
+              Login Kembali
+            </button>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

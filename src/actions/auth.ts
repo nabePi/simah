@@ -95,7 +95,7 @@ export async function changePassword(formData: FormData) {
 
   revalidatePath("/");
   await signOut({ redirect: false });
-  redirect("/login");
+  return { success: true };
 }
 
 export async function logout() {
