@@ -170,7 +170,9 @@ Buka [http://localhost:3000](http://localhost:3000) di browser.
    - `AUTH_SECRET` (wajib — minimal 32 karakter)
    - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` (untuk avatar)
    - `OPENAI_KEY` (opsional)
-6. Deploy. Compose akan menggabungkan service `app` ke `dokploy-network` agar bisa berkomunikasi dengan database di project yang sama.
+6. Deploy. Docker Compose akan:
+   - Menjalankan service `migrate` untuk menjalankan `drizzle-kit migrate` (membuat table jika belum ada)
+   - Setelah migrasi sukses, menjalankan service `app`
 
 ### Deploy Manual
 
