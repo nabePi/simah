@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
 import type { Sector } from "@/components/directory/participants-data";
 import { updateProfile, updateAvatar } from "@/actions/profile";
+import { compressImage } from "@/lib/compress-image";
 
 const sectorOptions: { value: Sector; label: string; icon: string }[] = [
   { value: "pendidikan", label: "Pendidikan", icon: "school" },
@@ -81,9 +82,16 @@ export function ProfileForm({
   async function handlePhotoChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
-    setAvatarPreview(URL.createObjectURL(file));
+    let prepared = file;
+    try {
+      prepared = await compressImage(file);
+    } catch {
+      // If compression fails, fall back to the original and let the server reject.
+      prepared = file;
+    }
+    setAvatarPreview(URL.createObjectURL(prepared));
     const fd = new FormData();
-    fd.append("avatar", file);
+    fd.append("avatar", prepared);
     const res = await updateAvatar(fd);
     if (res?.error) {
       alert(res.error);
