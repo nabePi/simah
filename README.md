@@ -161,16 +161,16 @@ Buka [http://localhost:3000](http://localhost:3000) di browser.
 
 ### Dokploy (Docker Compose)
 
-1. Deploy PostgreSQL terlebih dahulu di Dokploy (service terpisah) atau siapkan URL PostgreSQL eksternal.
-2. Buat project baru di Dokploy dan pilih tipe **Docker Compose**.
+1. Deploy PostgreSQL terlebih dahulu di Dokploy melalui menu **Databases** di project yang sama.
+2. Buat service baru di Dokploy dan pilih tipe **Docker Compose**.
 3. Hubungkan repository GitHub `nabePi/simah`.
 4. Pilih branch `main` dan file `docker-compose.yml`.
 5. Buka menu **Environment Settings** dan tambahkan variabel berikut:
-   - `DATABASE_URL` (wajib — URL PostgreSQL yang sudah disiapkan)
+   - `DATABASE_URL` (wajib — salin **Internal Connection URL** dari database Dokploy, contoh: `postgresql://user:pass@simah-postgres-xxxxxx:5432/dbname`)
    - `AUTH_SECRET` (wajib — minimal 32 karakter)
    - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` (untuk avatar)
    - `OPENAI_KEY` (opsional)
-6. Deploy. Service `app` akan berjalan di port `3000` (Docker bind ke port random agar tidak bentrok dengan app lain di Dokploy).
+6. Deploy. Compose akan menggabungkan service `app` ke `dokploy-network` agar bisa berkomunikasi dengan database di project yang sama.
 
 ### Deploy Manual
 

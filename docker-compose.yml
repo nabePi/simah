@@ -16,8 +16,8 @@ services:
       R2_BUCKET: ${R2_BUCKET}
       OPENAI_KEY: ${OPENAI_KEY}
     networks:
-      - simah-network
+      - dokploy-network
 
 networks:
-  simah-network:
-    driver: bridge
+  dokploy-network:
+    external: true
