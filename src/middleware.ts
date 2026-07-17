@@ -29,6 +29,12 @@ export default auth((req) => {
     }
   }
 
+  if (isAdmin) {
+    return NextResponse.redirect(
+      new URL("/admin/dashboard?tab=users", req.url),
+    );
+  }
+
   // Protect user-only routes
   if (protectedUserRoutes.some((p) => pathname.startsWith(p))) {
     if (!isUser) {
@@ -46,6 +52,7 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
+    "/",
     "/admin/:path*",
     "/profile",
     "/notifications",
