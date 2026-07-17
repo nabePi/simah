@@ -159,7 +159,21 @@ Buka [http://localhost:3000](http://localhost:3000) di browser.
 
 ## Deploy
 
-Aplikasi ini dapat di-deploy ke platform seperti [Vercel](https://vercel.com), [Railway](https://railway.app), atau server lain yang mendukung Next.js. Pastikan semua environment variables diatur sebelum build.
+### Dokploy (Docker Compose)
+
+1. Buat project baru di Dokploy dan pilih tipe **Docker Compose**.
+2. Hubungkan repository GitHub `nabePi/simah`.
+3. Pilih branch `main` dan file `docker-compose.yml`.
+4. Buka menu **Environment Settings** dan tambahkan semua variabel dari `.env.example`:
+   - `DATABASE_URL` (wajib — bisa gunakan DB internal Dokploy atau service `postgres` di compose)
+   - `AUTH_SECRET` (wajib — minimal 32 karakter)
+   - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` (untuk avatar)
+   - `OPENAI_KEY` (opsional)
+5. Deploy. Service `app` akan berjalan di port `3000`.
+
+> Jika `DATABASE_URL` tidak diatur, compose akan menggunakan service `postgres` bawaan dengan kredensial default `simah:simah@postgres:5432/simah`.
+
+### Deploy Manual
 
 ```bash
 npm run build
