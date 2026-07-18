@@ -32,8 +32,8 @@ export function OverviewSection({ users, actions }: Props) {
   const stats = [
     { icon: "group", label: "Total User", value: users.length },
     { icon: "assignment_turned_in", label: "Total Action", value: actions.length },
-    { icon: "progress_activity", label: "Sedang Berjalan", value: inProgressCount },
-    { icon: "task_alt", label: "Selesai", value: doneCount },
+    { icon: "progress_activity", label: "Action Sedang Berjalan", value: inProgressCount },
+    { icon: "task_alt", label: "Action Selesai", value: doneCount },
   ];
 
   return (
