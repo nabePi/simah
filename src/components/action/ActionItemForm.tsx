@@ -126,6 +126,7 @@ export function ActionItemForm({
   const [generatingSkills, setGeneratingSkills] = useState(false);
   const [skillsError, setSkillsError] = useState<string | null>(null);
   const [showDiscardModal, setShowDiscardModal] = useState(false);
+  const [showRequiredModal, setShowRequiredModal] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   function addSkill() {
@@ -220,6 +221,18 @@ export function ActionItemForm({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const missing = {
+      title: title.trim().length === 0,
+      background: background.trim().length === 0,
+      objectives: objectives.trim().length === 0,
+    };
+    if (missing.title || missing.background || missing.objectives) {
+      setRequiredFieldErrors(missing);
+      setShowRequiredModal(true);
+      setSubmitted(false);
+      return;
+    }
+    setRequiredFieldErrors({ title: false, background: false, objectives: false });
     setSubmitted(true);
     startTransition(async () => {
       const payload = {
@@ -916,6 +929,38 @@ export function ActionItemForm({
                 Lanjut Mengisi
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showRequiredModal && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-on-background/60 p-6"
+          onClick={() => setShowRequiredModal(false)}
+        >
+          <div
+            className="bg-surface rounded-2xl p-6 max-w-sm w-full flex flex-col items-center gap-4 shadow-lg relative"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-full bg-error-container flex items-center justify-center">
+              <Icon name="warning" filled className="text-error text-[28px]" />
+            </div>
+            <div className="text-center">
+              <h3 className="font-headline-md text-headline-md text-on-surface">
+                Lengkapi wajib diisi
+              </h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                Judul Action Item, Latar Belakang, dan Tujuan / Output wajib
+                diisi sebelum menyimpan.
+              </p>
+            </div>
+            <button
+              className="w-full h-touch-target bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all"
+              type="button"
+              onClick={() => setShowRequiredModal(false)}
+            >
+              Lengkapi Sekarang
+            </button>
           </div>
         </div>
       )}
