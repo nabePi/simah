@@ -19,7 +19,7 @@ export default auth((req) => {
     if (pathname === "/admin/login") {
       if (isAdmin) {
         return NextResponse.redirect(
-          new URL("/admin/dashboard?tab=users", req.url),
+          new URL("/admin/dashboard", req.url),
         );
       }
       return NextResponse.next();
@@ -32,7 +32,7 @@ export default auth((req) => {
 
   if (isAdmin) {
     return NextResponse.redirect(
-      new URL("/admin/dashboard?tab=users", req.url),
+      new URL("/admin/dashboard", req.url),
     );
   }
 

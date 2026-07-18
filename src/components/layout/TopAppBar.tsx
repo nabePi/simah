@@ -16,20 +16,27 @@ type TopAppBarProps = {
 export async function TopAppBar({ hideNotifications = false }: TopAppBarProps) {
   let unreadCount = 0;
   let currentUser: { name: string; avatarUrl?: string } | null = null;
-  if (!hideNotifications) {
-    const session = await auth();
-    const userId = session?.user?.id ? Number(session.user.id) : NaN;
-    if (!Number.isNaN(userId)) {
-      unreadCount = await fetchUnreadNotificationCount(userId);
-      const [user] = await db
-        .select({ name: users.name, avatarUrl: users.avatarUrl })
-        .from(users)
-        .where(eq(users.id, userId))
-        .limit(1);
-      if (user) {
-        currentUser = { name: user.name, avatarUrl: avatarUrlToSrc(user.avatarUrl) };
-      }
+  const session = await auth();
+  const sessionName = session?.user?.name ?? null;
+  const numericUserId = Number(session?.user?.id);
+  // Admin sessions use a non-numeric id ("admin-<id>"); they aren't in the
+  // users table, so we skip the DB lookup and render the menu from the session.
+  const isAdmin = session?.user?.role === "admin";
+  if (isAdmin && sessionName) {
+    currentUser = { name: sessionName };
+  } else if (!Number.isNaN(numericUserId) && sessionName) {
+    if (!hideNotifications) {
+      unreadCount = await fetchUnreadNotificationCount(numericUserId);
     }
+    const [user] = await db
+      .select({ avatarUrl: users.avatarUrl })
+      .from(users)
+      .where(eq(users.id, numericUserId))
+      .limit(1);
+    currentUser = {
+      name: sessionName,
+      avatarUrl: avatarUrlToSrc(user?.avatarUrl),
+    };
   }
 
   return (
@@ -48,14 +55,14 @@ export async function TopAppBar({ hideNotifications = false }: TopAppBarProps) {
           </span>
         </div>
       </Link>
-      {!hideNotifications && (
-        <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1">
+        {!hideNotifications && (
           <NotificationBell initialUnreadCount={unreadCount} />
-          {currentUser && (
-            <UserMenu name={currentUser.name} avatarUrl={currentUser.avatarUrl} />
-          )}
-        </div>
-      )}
+        )}
+        {currentUser && (
+          <UserMenu name={currentUser.name} avatarUrl={currentUser.avatarUrl} />
+        )}
+      </div>
     </header>
   );
 }

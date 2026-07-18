@@ -29,7 +29,7 @@ export function AdminLoginForm() {
     <form className="flex flex-col gap-stack-lg" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-2">
         <label className={labelClass} htmlFor="username">
-          Username / Email
+          Username
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -48,17 +48,9 @@ export function AdminLoginForm() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="flex justify-between items-center">
-          <label className={labelClass} htmlFor="password">
-            Kata Sandi
-          </label>
-          <a
-            className="font-label-sm text-label-sm text-primary hover:text-primary-fixed-variant transition-colors"
-            href="#"
-          >
-            Lupa sandi?
-          </a>
-        </div>
+        <label className={labelClass} htmlFor="password">
+          Kata Sandi
+        </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Icon name="lock" className="text-on-surface-variant/70" />

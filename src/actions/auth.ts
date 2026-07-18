@@ -24,7 +24,7 @@ export async function loginAdmin(formData: FormData) {
     }
     throw error;
   }
-  redirect("/admin/dashboard?tab=users");
+  redirect("/admin/dashboard");
 }
 
 export async function loginUser(formData: FormData) {

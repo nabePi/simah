@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { TopAppBar } from "@/components/layout/TopAppBar";
 import { BackAppBar } from "@/components/layout/BackAppBar";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { AdminBottomNavBar } from "@/components/layout/AdminBottomNavBar";
@@ -97,10 +96,7 @@ export default async function AdminActionDetailPage({
   };
   return (
     <>
-      <TopAppBar hideNotifications />
-      <div className="md:hidden">
-        <BackAppBar title="Detail Action" />
-      </div>
+      <BackAppBar title="Detail Action" />
       <AdminSidebar />
       <main className="flex-1 md:pl-64 px-4 pb-24 md:pb-6">
         <ActionDetail

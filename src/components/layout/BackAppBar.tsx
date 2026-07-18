@@ -12,7 +12,7 @@ export function BackAppBar({
 }) {
   const router = useRouter();
   return (
-    <header className="w-full sticky top-0 z-50 bg-surface flex items-center px-gutter h-touch-target border-b border-outline-variant/30">
+    <header className="w-full sticky top-0 z-50 bg-surface flex items-center px-gutter h-16 border-b border-outline-variant/30">
       <button
         aria-label="Kembali"
         className="w-10 h-10 -ml-2 flex items-center justify-center rounded-full hover:bg-surface-container-low text-on-surface-variant transition-colors"

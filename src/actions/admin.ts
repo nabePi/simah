@@ -16,6 +16,7 @@ import type { ActionStatus } from "@/components/action/action-items-data";
 import { hashPassword } from "@/lib/password";
 import { generateDefaultPassword, generateInitials } from "@/lib/default-password";
 import { auth } from "@/auth/config";
+import { avatarUrlToSrc } from "@/lib/avatar";
 
 export type ImportedUser = {
   id: number;
@@ -300,7 +301,7 @@ export async function fetchAdminUsers(): Promise<AdminUserRow[]> {
     role: u.role ?? null,
     organization: u.organization ?? null,
     skills: u.skills ?? [],
-    avatarUrl: u.avatarUrl,
+    avatarUrl: avatarUrlToSrc(u.avatarUrl) ?? null,
     initials: u.initials,
     status: u.status as "active" | "blocked",
   }));
