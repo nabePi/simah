@@ -3,9 +3,9 @@ import { Icon } from "@/components/ui/Icon";
 import type { ActionStatus } from "@/components/action/action-items-data";
 
 const statusLabel: Record<ActionStatus, string> = {
-  todo: "To Do",
-  in_progress: "In Progress",
-  done: "Done",
+  todo: "Belum Dimulai",
+  in_progress: "Sedang Berjalan",
+  done: "Selesai",
 };
 
 const statusBadgeClass: Record<ActionStatus, string> = {

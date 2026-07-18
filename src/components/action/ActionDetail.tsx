@@ -13,9 +13,9 @@ import { ContributeModal } from "./ContributeModal";
 import { ManifestasiDetailModal } from "./ManifestasiDetailModal";
 
 const statusLabel: Record<string, string> = {
-  todo: "To Do",
-  in_progress: "In Progress",
-  done: "Done",
+  todo: "Belum Dimulai",
+  in_progress: "Sedang Berjalan",
+  done: "Selesai",
 };
 
 const statusBadgeClass: Record<string, string> = {

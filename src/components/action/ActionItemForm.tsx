@@ -46,19 +46,19 @@ const statusOptions: {
 }[] = [
   {
     value: "todo",
-    label: "To Do",
+    label: "Belum Dimulai",
     activeClass:
       "peer-checked:bg-surface-container-high peer-checked:border-status-todo peer-checked:text-status-todo",
   },
   {
     value: "in_progress",
-    label: "In Progress",
+    label: "Sedang Berjalan",
     activeClass:
       "peer-checked:bg-surface-container-high peer-checked:border-status-progress peer-checked:text-status-progress",
   },
   {
     value: "done",
-    label: "Done",
+    label: "Selesai",
     activeClass:
       "peer-checked:bg-surface-container-high peer-checked:border-status-done peer-checked:text-status-done",
   },
@@ -791,7 +791,7 @@ export function ActionItemForm({
                     onChange={() => setStatus(option.value)}
                   />
                   <div
-                    className={`text-center py-2 px-1 rounded-lg border border-outline-variant text-on-surface-variant font-label-md text-label-md transition-all ${option.activeClass}`}
+                    className={`h-full flex items-center justify-center text-center py-2 px-1 rounded-lg border border-outline-variant text-on-surface-variant font-label-md text-label-md transition-all ${option.activeClass}`}
                   >
                     {option.label}
                   </div>
