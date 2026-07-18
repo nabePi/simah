@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export default function AdminDashboardPage() {
   return (
     <>
-      <TopAppBar hideNotifications />
+      <TopAppBar hideNotifications admin />
       <Suspense fallback={null}>
         <AdminSidebar />
       </Suspense>

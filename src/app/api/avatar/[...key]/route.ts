@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { auth } from "@/auth/config";
+import { userAuthFn } from "@/auth/user-auth";
+import { adminAuthFn } from "@/auth/admin-auth";
 import {
   getAvatarObject,
   headAvatar,
@@ -13,7 +14,8 @@ export async function GET(
   _req: NextRequest,
   ctx: { params: Promise<{ key: string[] }> },
 ) {
-  const session = await auth();
+  // Avatar is rendered in both admin and peserta areas — accept either session.
+  const session = (await userAuthFn()) ?? (await adminAuthFn());
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
   }

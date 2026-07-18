@@ -1,6 +1,9 @@
 "use server";
 
-import { signIn, signOut } from "@/auth/config";
+import { userAuthFn } from "@/auth/user-auth";
+import { adminAuthFn } from "@/auth/admin-auth";
+import { adminSignIn, adminSignOut } from "@/auth/admin-auth";
+import { userSignIn, userSignOut } from "@/auth/user-auth";
 import { AuthError } from "next-auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
@@ -13,7 +16,7 @@ export async function loginAdmin(formData: FormData) {
   const username = String(formData.get("username") ?? "");
   const password = String(formData.get("password") ?? "");
   try {
-    await signIn("admin", {
+    await adminSignIn("admin", {
       username,
       password,
       redirect: false,
@@ -32,7 +35,7 @@ export async function loginUser(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   let result;
   try {
-    result = await signIn("peserta", {
+    result = await userSignIn("peserta", {
       waNumber,
       password,
       redirect: false,
@@ -77,8 +80,7 @@ export async function changePassword(formData: FormData) {
   }
 
   // Get current user from session
-  const { auth } = await import("@/auth/config");
-  const session = await auth();
+  const session = await userAuthFn();
   if (!session?.user?.id) {
     return { error: "Sesi tidak valid." };
   }
@@ -94,11 +96,16 @@ export async function changePassword(formData: FormData) {
     .where(eq(users.id, userId));
 
   revalidatePath("/");
-  await signOut({ redirect: false });
+  await userSignOut({ redirect: false });
   return { success: true };
 }
 
-export async function logout() {
-  await signOut({ redirect: false });
+export async function adminLogout() {
+  await adminSignOut({ redirect: false });
+  redirect("/admin/login");
+}
+
+export async function userLogout() {
+  await userSignOut({ redirect: false });
   redirect("/login");
 }

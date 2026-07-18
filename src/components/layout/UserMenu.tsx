@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { Avatar } from "@/components/ui/Avatar";
-import { logout } from "@/actions/auth";
 
 type UserMenuProps = {
   name: string;
   avatarUrl?: string;
+  onLogout: () => Promise<void> | void;
 };
 
-export function UserMenu({ name, avatarUrl }: UserMenuProps) {
+export function UserMenu({ name, avatarUrl, onLogout }: UserMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +39,7 @@ export function UserMenu({ name, avatarUrl }: UserMenuProps) {
         <div className="absolute right-0 top-full mt-2 w-48 bg-surface-container rounded-xl shadow-md border border-outline-variant/20 py-1 z-50">
           <button
             type="button"
-            onClick={() => logout()}
+            onClick={() => onLogout()}
             className="flex items-center gap-3 px-4 py-2.5 w-full text-left text-error hover:bg-surface-container-high transition-colors font-body-md text-body-md"
           >
             <Icon name="logout" className="text-[20px]" />

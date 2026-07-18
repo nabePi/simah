@@ -1,11 +1,12 @@
-import { auth } from "./config";
+import { userAuthFn } from "./user-auth";
+import { adminAuthFn } from "./admin-auth";
 
 export async function getSession() {
-  return auth();
+  return userAuthFn();
 }
 
 export async function getCurrentUser() {
-  const session = await auth();
+  const session = await userAuthFn();
   return session?.user;
 }
 
@@ -17,10 +18,20 @@ export async function requireUser() {
   return user;
 }
 
+export async function getAdminSession() {
+  return adminAuthFn();
+}
+
+export async function getCurrentAdmin() {
+  const session = await adminAuthFn();
+  if (session?.user?.role !== "admin") return null;
+  return session.user;
+}
+
 export async function requireAdmin() {
-  const user = await getCurrentUser();
-  if (!user || user.role !== "admin") {
+  const admin = await getCurrentAdmin();
+  if (!admin) {
     return null;
   }
-  return user;
+  return admin;
 }

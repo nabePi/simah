@@ -15,7 +15,7 @@ import type { Sector } from "@/components/directory/participants-data";
 import type { ActionStatus } from "@/components/action/action-items-data";
 import { hashPassword } from "@/lib/password";
 import { generateDefaultPassword, generateInitials } from "@/lib/default-password";
-import { auth } from "@/auth/config";
+import { adminAuthFn } from "@/auth/admin-auth";
 import { avatarUrlToSrc } from "@/lib/avatar";
 
 export type ImportedUser = {
@@ -54,7 +54,7 @@ export type AdminUserRow = {
 };
 
 export async function requireAdminSession() {
-  const session = await auth();
+  const session = await adminAuthFn();
   if (!session?.user || session.user.role !== "admin") {
     throw new Error("UNAUTHORIZED");
   }

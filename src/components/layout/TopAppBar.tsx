@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
-import { auth } from "@/auth/config";
+import { adminAuthFn } from "@/auth/admin-auth";
+import { userAuthFn } from "@/auth/user-auth";
+import { adminLogout, userLogout } from "@/actions/auth";
 import { fetchUnreadNotificationCount } from "@/lib/queries";
 import { db } from "@/db";
 import { users } from "@/db/schema";
@@ -11,18 +13,23 @@ import { NotificationBell } from "./NotificationBell";
 
 type TopAppBarProps = {
   hideNotifications?: boolean;
+  admin?: boolean;
 };
 
-export async function TopAppBar({ hideNotifications = false }: TopAppBarProps) {
+export async function TopAppBar({
+  hideNotifications = false,
+  admin = false,
+}: TopAppBarProps) {
   let unreadCount = 0;
   let currentUser: { name: string; avatarUrl?: string } | null = null;
-  const session = await auth();
+  const logoutAction = admin ? adminLogout : userLogout;
+  const session = admin ? await adminAuthFn() : await userAuthFn();
   const sessionName = session?.user?.name ?? null;
   const numericUserId = Number(session?.user?.id);
   // Admin sessions use a non-numeric id ("admin-<id>"); they aren't in the
   // users table, so we skip the DB lookup and render the menu from the session.
-  const isAdmin = session?.user?.role === "admin";
-  if (isAdmin && sessionName) {
+  const isAdminSession = session?.user?.role === "admin";
+  if (isAdminSession && sessionName) {
     currentUser = { name: sessionName };
   } else if (!Number.isNaN(numericUserId) && sessionName) {
     if (!hideNotifications) {
@@ -60,7 +67,11 @@ export async function TopAppBar({ hideNotifications = false }: TopAppBarProps) {
           <NotificationBell initialUnreadCount={unreadCount} />
         )}
         {currentUser && (
-          <UserMenu name={currentUser.name} avatarUrl={currentUser.avatarUrl} />
+          <UserMenu
+            name={currentUser.name}
+            avatarUrl={currentUser.avatarUrl}
+            onLogout={logoutAction}
+          />
         )}
       </div>
     </header>
