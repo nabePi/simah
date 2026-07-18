@@ -6,7 +6,7 @@ import { ParticipantDirectory } from "@/components/directory/ParticipantDirector
 import { ProfileCompletenessBanner } from "@/components/profile/ProfileCompletenessBanner";
 import { db } from "@/db";
 import { users, connections } from "@/db/schema";
-import { eq, and, or } from "drizzle-orm";
+import { eq, and, or, asc } from "drizzle-orm";
 import { auth } from "@/auth/config";
 import { avatarUrlToSrc } from "@/lib/avatar";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
@@ -26,7 +26,8 @@ export default async function DirectoryPage() {
   const allUsers = await db
     .select()
     .from(users)
-    .where(eq(users.status, "active"));
+    .where(eq(users.status, "active"))
+    .orderBy(asc(users.name));
 
   const currentUser = allUsers.find((u) => u.id === currentUserId);
   const currentUserName = currentUser?.name ?? "";
