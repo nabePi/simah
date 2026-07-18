@@ -11,13 +11,13 @@ import type { ActionItem, ActionStatus } from "./action-items-data";
 import { toggleVote as toggleVoteAction } from "@/actions/actions-item";
 
 const statusOptions: { value: ActionStatus; label: string }[] = [
-  { value: "todo", label: "Belum Mulai" },
+  { value: "todo", label: "Belum Dimulai" },
   { value: "in_progress", label: "Sedang Berjalan" },
   { value: "done", label: "Selesai" },
 ];
 
 const statusLabel: Record<ActionStatus, string> = {
-  todo: "Belum Mulai",
+  todo: "Belum Dimulai",
   in_progress: "Sedang Berjalan",
   done: "Selesai",
 };

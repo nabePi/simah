@@ -5,7 +5,7 @@ import { type Participant, type Sector } from "@/components/directory/participan
 import type { ActionItem, ActionStatus } from "./action-items-data";
 
 const statusLabel: Record<ActionStatus, string> = {
-  todo: "Belum Mulai",
+  todo: "Belum Dimulai",
   in_progress: "Sedang Berjalan",
   done: "Selesai",
 };

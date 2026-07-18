@@ -33,6 +33,31 @@ const sectorActiveCardClass: Record<Sector, string> = {
   profesional: "border-sector-profesional bg-sector-profesional/5 ring-1 ring-sector-profesional",
 };
 
+const sectorLabel: Record<Sector, string> = {
+  pendidikan: "Pendidikan",
+  ekonomi: "Ekonomi",
+  profesional: "Profesional",
+};
+
+const sectorBadgeClass: Record<Sector, string> = {
+  pendidikan: "bg-sector-pendidikan/10 text-sector-pendidikan border-sector-pendidikan/20",
+  ekonomi: "bg-sector-ekonomi/10 text-sector-ekonomi border-sector-ekonomi/20",
+  profesional: "bg-sector-profesional/10 text-sector-profesional border-sector-profesional/20",
+};
+
+const sectorAccentClass: Record<Sector, string> = {
+  pendidikan: "bg-sector-pendidikan/5",
+  ekonomi: "bg-sector-ekonomi/5",
+  profesional: "bg-sector-profesional/5",
+};
+
+function initialsOf(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
 const inputClass =
   "w-full h-touch-target px-4 rounded-lg border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm text-on-surface placeholder-outline transition-colors outline-none";
 
@@ -71,6 +96,7 @@ export function ProfileForm({
   const [offering, setOffering] = useState(initialOffering);
   const [showWhatsapp, setShowWhatsapp] = useState(initialShowWhatsapp);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -413,6 +439,131 @@ export function ProfileForm({
       >
         {pending ? "Menyimpan..." : "Simpan"}
       </button>
+
+      <button
+        type="button"
+        onClick={() => setShowPreview(true)}
+        className="w-full h-touch-target bg-surface text-primary border border-primary font-label-md text-label-md rounded-xl flex justify-center items-center gap-2 hover:bg-primary-container/40 active:scale-[0.98] transition-all"
+      >
+        <Icon name="visibility" className="text-[20px]" />
+        Preview Kartu
+      </button>
+
+      {showPreview && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-on-background/60 p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Preview kartu profil"
+          onClick={() => setShowPreview(false)}
+        >
+          <div
+            className="bg-surface rounded-2xl p-5 max-w-sm w-full flex flex-col gap-4 shadow-lg relative"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="font-headline-md text-headline-md text-on-surface">
+                Preview Kartu Profil
+              </h3>
+              <button
+                type="button"
+                aria-label="Tutup"
+                onClick={() => setShowPreview(false)}
+                className="p-1.5 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors"
+              >
+                <Icon name="close" />
+              </button>
+            </div>
+            <p className="font-caption text-caption text-on-surface-variant">
+              Begini tampilan kartu Anda di Direktori Peserta.
+            </p>
+
+            {(() => {
+              const accent = sectorAccentClass[sector];
+              const badge = sectorBadgeClass[sector];
+              const nameTrim = initialName.trim() || "Nama Anda";
+              return (
+                <article className="bg-background-subtle rounded-xl border border-outline-variant/30 p-4 flex flex-col gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                  <div
+                    className={`absolute top-0 right-0 w-24 h-24 rounded-bl-full -z-0 ${accent}`}
+                  />
+                  <div className="flex items-start gap-4 relative z-10">
+                    <div className="shrink-0">
+                      {avatarPreview ? (
+                        <Image
+                          alt={nameTrim}
+                          src={avatarPreview}
+                          width={48}
+                          height={48}
+                          unoptimized
+                          className="w-12 h-12 rounded-full object-cover border border-outline-variant/20 shadow-sm"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-headline-md border border-outline-variant/20 shadow-sm">
+                          {initialsOf(initialName)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-headline-md text-headline-md text-on-surface leading-tight">
+                        {nameTrim}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full font-caption text-caption font-bold border ${badge}`}
+                        >
+                          {sectorLabel[sector]}
+                        </span>
+                        <span className="font-caption text-caption text-on-surface-variant">
+                          {role || "Peran/Jabatan"}
+                        </span>
+                      </div>
+                      <p className="font-caption text-caption text-on-surface-variant/70 mt-0.5">
+                        {organization || "Organisasi/Institusi"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3 mt-2">
+                    <div className="flex flex-col gap-1.5">
+                      <p className="font-label-md text-label-md text-on-surface flex items-center gap-1.5">
+                        <Icon name="workspace_premium" className="text-[16px] text-secondary" />
+                        Keahlian
+                      </p>
+                      {skills.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-2 py-1 rounded-md bg-surface-container-low text-on-surface-variant font-caption text-caption border border-outline-variant/20"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="font-caption text-caption text-on-surface-variant/50">
+                          Belum ada keahlian ditambahkan
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="bg-surface-container-low p-3 rounded-lg border border-outline-variant/10">
+                      <p className="font-label-md text-label-md text-on-surface flex items-center gap-1.5 mb-1">
+                        <Icon name="volunteer_activism" className="text-[16px] text-primary" />
+                        Bisa membantu
+                      </p>
+                      <p className="font-body-sm text-body-sm text-on-surface-variant">
+                        {offering || "Belum diisi"}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              );
+            })()}
+          </div>
+        </div>
+      )}
 
       {showSuccess && (
         <div
