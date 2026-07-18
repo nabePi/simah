@@ -50,16 +50,18 @@ export function UsersSection({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return users.filter((user) => {
-      const matchSector =
-        sectorFilter === "all" || user.sector === sectorFilter;
-      if (!matchSector) return false;
-      if (!q) return true;
-      return (
-        user.name.toLowerCase().includes(q) ||
-        user.waNumber.toLowerCase().includes(q)
-      );
-    });
+    return users
+      .filter((user) => {
+        const matchSector =
+          sectorFilter === "all" || user.sector === sectorFilter;
+        if (!matchSector) return false;
+        if (!q) return true;
+        return (
+          user.name.toLowerCase().includes(q) ||
+          user.waNumber.toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => a.name.localeCompare(b.name, "id"));
   }, [users, query, sectorFilter]);
 
   return (
