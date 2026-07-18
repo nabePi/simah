@@ -2,6 +2,10 @@
 
 **Aksi, Sinergi, Berdaya**
 
+Simah adalah singkatan dari **Sinergi Ummah** — semangat mempertemukan dan menyatukan kekuatan umat lintas sektor demi aksi nyata.
+
+> Kata "simah" (dalam bahasa Arab ditulis **سِمة**) secara umum memiliki arti tanda, ciri, atau karakteristik. Kata ini sering digunakan untuk merujuk pada suatu tanda pengenal atau ciri khas yang melekat pada sesuatu.
+
 Simah adalah aplikasi web mobile-first untuk mendukung pelaksanaan FGD (Focus Group Discussion) yang mempertemukan tiga sektor peserta — **Pendidikan**, **Ekonomi**, dan **Profesional** — agar saling mengenal, saling membantu antar sektor, berkolaborasi, dan menghasilkan *action item* / proyek nyata yang dapat dimonitor pasca-acara.
 
 > *Minal Aqwal Ilal Af'al — Dari Narasi menuju Aksi*
