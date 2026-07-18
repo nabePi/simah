@@ -63,7 +63,10 @@ export function NotificationCard({
           <button
             type="button"
             aria-label={`Lihat profil ${actor.name}`}
-            onClick={() => onActorClick?.(actor)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onActorClick?.(actor);
+            }}
             className="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden flex items-center justify-center shrink-0 hover:ring-2 hover:ring-primary/40 transition-all"
           >
             {actor.avatarUrl ? (
