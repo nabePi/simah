@@ -234,7 +234,7 @@ export function ActionDetail({
           <section className="glass-card rounded-xl p-5 flex flex-col gap-stack-md">
             {item.background && (
               <div className="flex flex-col gap-1">
-                <p className="font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+                <p className="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1">
                   <Icon name="description" className="text-[16px]" />
                   Latar Belakang
                 </p>
@@ -245,7 +245,7 @@ export function ActionDetail({
             )}
             {item.objectives && (
               <div className="flex flex-col gap-1">
-                <p className="font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+                <p className="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1">
                   <Icon name="flag" className="text-[16px]" />
                   Tujuan / Output
                 </p>
@@ -255,7 +255,7 @@ export function ActionDetail({
               </div>
             )}
             <div className="flex flex-col gap-1">
-              <p className="font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+              <p className="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1">
                 <Icon name="short_text" className="text-[16px]" />
                 Deskripsi Singkat
               </p>
