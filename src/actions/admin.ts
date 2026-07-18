@@ -250,7 +250,7 @@ export async function broadcastNotification(input: {
   targetType: "all" | "sector" | "specific";
   sector?: string;
   userId?: number;
-}): Promise<{ count?: number; error?: string }> {
+}): Promise<{ count?: number; broadcastId?: number; error?: string }> {
   await requireAdminSession();
   const title = input.title.trim();
   const body = input.body.trim();
@@ -275,6 +275,7 @@ export async function broadcastNotification(input: {
 
   if (targetIds.length === 0) return { error: "Tidak ada penerima notifikasi." };
 
+  const broadcastId = Date.now();
   await db.insert(notifications).values(
     targetIds.map((userId) => ({
       userId,
@@ -282,12 +283,13 @@ export async function broadcastNotification(input: {
       variant: input.variant,
       title,
       body,
+      broadcastId,
       read: false,
     }))
   );
   revalidatePath("/admin/dashboard");
   revalidatePath("/notifications");
-  return { count: targetIds.length };
+  return { count: targetIds.length, broadcastId };
 }
 
 // Server-side data fetchers (used by server component pages)

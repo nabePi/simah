@@ -3,6 +3,7 @@ import {
   serial,
   text,
   integer,
+  bigint,
   boolean,
   timestamp,
   date,
@@ -170,6 +171,7 @@ export const notifications = pgTable("notifications", {
   title: text("title").notNull(),
   body: text("body").notNull(),
   actorId: integer("actor_id").references(() => users.id),
+  broadcastId: bigint("broadcast_id", { mode: "number" }),
   read: boolean("read").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

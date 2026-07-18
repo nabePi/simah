@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import type { NotificationItem } from "@/components/notifications/notifications-data";
@@ -52,7 +52,14 @@ export function AdminDashboardClient({
   const [notificationsList, setNotificationsList] =
     useState<NotificationItem[]>(initialNotifications);
   const [importedPasswords, setImportedPasswords] = useState<ImportedUser[] | null>(null);
+  const [sendToast, setSendToast] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (sendToast === null) return;
+    const timer = setTimeout(() => setSendToast(null), 2500);
+    return () => clearTimeout(timer);
+  }, [sendToast]);
 
   const userById = useMemo(
     () => new Map(usersList.map((u) => [String(u.id), u])),
@@ -195,7 +202,7 @@ export function AdminDashboardClient({
       createdAt: new Date().toISOString(),
     };
     setNotificationsList((prev) => [preview, ...prev]);
-    alert(`Notifikasi terkirim ke ${res.count} user.`);
+    setSendToast(res.count ?? null);
     return true;
   }
 
@@ -249,6 +256,42 @@ export function AdminDashboardClient({
           users={importedPasswords}
           onClose={() => setImportedPasswords(null)}
         />
+      )}
+
+      {sendToast !== null && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-on-background/60 p-6"
+          role="status"
+          aria-live="polite"
+          onClick={() => setSendToast(null)}
+        >
+          <div
+            className="bg-surface rounded-2xl p-6 max-w-sm w-full flex flex-col items-center gap-4 shadow-lg relative"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              aria-label="Tutup"
+              onClick={() => setSendToast(null)}
+              className="absolute top-3 right-3 p-1.5 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors"
+            >
+              <Icon name="close" />
+            </button>
+
+            <div className="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center">
+              <Icon name="check" className="text-[32px] text-primary" filled />
+            </div>
+
+            <div className="text-center flex flex-col items-center gap-1">
+              <h3 className="font-headline-md text-headline-md text-on-surface">
+                Notifikasi berhasil dikirim
+              </h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                Pesan terkirim ke {sendToast} penerima.
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
