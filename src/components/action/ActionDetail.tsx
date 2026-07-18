@@ -104,6 +104,7 @@ export function ActionDetail({
     null,
   );
   const [showManifestasiModal, setShowManifestasiModal] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const creator = creatorOverride
     ? {
@@ -149,6 +150,41 @@ export function ActionDetail({
     setShowContribute(false);
   }
 
+  async function handleShare() {
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/action/${item.id}`
+        : "";
+    const shareData = {
+      title: `${item.title} — Simah`,
+      text: `Yuk berkolaborasi dalam aksi "${item.title}" di Simah.${item.description ? ` ${item.description}` : ""} Mari bersama mewujudkannya!`,
+      url,
+    };
+    if (
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function"
+    ) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // user dismissed the share sheet — no action needed
+      }
+      return;
+    }
+    if (
+      typeof navigator !== "undefined" &&
+      navigator.clipboard?.writeText
+    ) {
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 2000);
+      } catch {
+        // clipboard unavailable — silently ignore
+      }
+    }
+  }
+
   const needsFunding = item.needsFunding ?? false;
   const isPic = item.isPic ?? true;
   const skills = item.skills ?? [];
@@ -164,11 +200,26 @@ export function ActionDetail({
       <Wrapper {...wrapperProps}>
         <div className={`px-container-margin flex flex-col gap-stack-lg max-w-4xl mx-auto w-full md:max-w-2xl ${embedded ? "py-stack-md pb-6" : ""}`}>
           <section className="flex flex-col gap-3">
-            <span
-              className={`inline-flex items-center px-2.5 py-1 rounded-full font-label-sm text-label-sm self-start ${statusBadgeClass[item.status]}`}
-            >
-              {statusLabel[item.status]}
-            </span>
+            <div className="flex items-center justify-between gap-3">
+              <span
+                className={`inline-flex items-center px-2.5 py-1 rounded-full font-label-sm text-label-sm ${statusBadgeClass[item.status]}`}
+              >
+                {statusLabel[item.status]}
+              </span>
+              <button
+                type="button"
+                onClick={handleShare}
+                aria-label="Bagikan action"
+                className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-highest active:scale-95 transition-all"
+              >
+                <Icon
+                  name={copied ? "check" : "share"}
+                  className="text-[14px]"
+                  filled={copied}
+                />
+                {copied ? "Tersalin" : "Bagikan"}
+              </button>
+            </div>
             <h1 className="font-headline-lg text-headline-lg text-on-surface">
               {item.title}
             </h1>
