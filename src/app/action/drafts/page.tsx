@@ -23,6 +23,8 @@ export default async function DraftsPage() {
     title: string;
     background: string;
     objectives: string;
+    beneficiary: string;
+    interactingSectors: ("pendidikan" | "ekonomi" | "profesional")[];
     description: string;
     status: "todo" | "in_progress" | "done";
     needsFunding: boolean;
@@ -48,6 +50,12 @@ export default async function DraftsPage() {
       title: a.title,
       background: a.background ?? "",
       objectives: a.objectives ?? "",
+      beneficiary: a.beneficiary ?? "",
+      interactingSectors: (a.interactingSectors ?? []) as (
+        | "pendidikan"
+        | "ekonomi"
+        | "profesional"
+      )[],
       description: a.description,
       status: a.status as "todo" | "in_progress" | "done",
       needsFunding: a.needsFunding ?? false,

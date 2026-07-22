@@ -25,6 +25,8 @@ export type ActionDetail = {
   votes: number;
   background: string | null;
   objectives: string | null;
+  beneficiary: string | null;
+  interactingSectors: ("pendidikan" | "ekonomi" | "profesional")[];
   needsFunding: boolean | null;
   isPic: boolean | null;
   skills: string[];
@@ -79,6 +81,12 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
     votes: row.votes,
     background: row.background,
     objectives: row.objectives,
+    beneficiary: row.beneficiary,
+    interactingSectors: (row.interactingSectors ?? []) as (
+      | "pendidikan"
+      | "ekonomi"
+      | "profesional"
+    )[],
     needsFunding: row.needsFunding,
     isPic: row.isPic,
     skills: row.skills ?? [],

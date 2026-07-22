@@ -88,6 +88,8 @@ export default async function AdminActionDetailPage({
     votes: actionRow.votes,
     background: actionRow.background ?? undefined,
     objectives: actionRow.objectives ?? undefined,
+    beneficiary: actionRow.beneficiary ?? undefined,
+    interactingSectors: actionRow.interactingSectors ?? undefined,
     needsFunding: actionRow.needsFunding ?? undefined,
     isPic: actionRow.isPic ?? undefined,
     skills: actionRow.skills,

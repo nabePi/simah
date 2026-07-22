@@ -207,10 +207,12 @@ export async function adminUpdateAction(
     title: string;
     background?: string;
     objectives?: string;
+    beneficiary?: string;
     description: string;
     needsFunding?: boolean;
     isPic?: boolean;
     skills?: string[];
+    interactingSectors?: ("pendidikan" | "ekonomi" | "profesional")[];
     status?: "todo" | "in_progress" | "done";
     startDate?: string | null;
     endDate?: string | null;
@@ -226,9 +228,11 @@ export async function adminUpdateAction(
       description: input.description,
       background: input.background ?? null,
       objectives: input.objectives ?? null,
+      beneficiary: input.beneficiary ?? null,
       needsFunding: input.needsFunding ?? false,
       isPic: input.isPic ?? true,
       skills: input.skills ?? [],
+      interactingSectors: input.interactingSectors ?? [],
       status: input.status ?? "todo",
       startDate: input.startDate ?? null,
       endDate: input.endDate ?? null,

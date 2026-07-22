@@ -99,6 +99,8 @@ export const actions = pgTable("actions", {
   votes: integer("votes").default(0).notNull(),
   background: text("background"),
   objectives: text("objectives"),
+  beneficiary: text("beneficiary"),
+  interactingSectors: text("interacting_sectors").array().default([]),
   needsFunding: boolean("needs_funding").default(false),
   isPic: boolean("is_pic").default(true),
   skills: text("skills").array().default([]),

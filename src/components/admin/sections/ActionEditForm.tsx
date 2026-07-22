@@ -4,12 +4,16 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { Avatar } from "@/components/ui/Avatar";
-import { type Participant } from "@/components/directory/participants-data";
+import { type Participant, type Sector } from "@/components/directory/participants-data";
 import {
   sectorLabel,
   sectorBadgeClass,
   statusLabel,
 } from "../badges";
+import {
+  sectorOptions,
+  sectorActivePillClass,
+} from "@/components/action/sector-options";
 import type { ActionItem, ActionStatus } from "@/components/action/action-items-data";
 import { adminUpdateAction } from "@/actions/admin";
 import { ManifestasiDetailModal } from "@/components/action/ManifestasiDetailModal";
@@ -95,11 +99,15 @@ export function ActionEditForm({
   const [title, setTitle] = useState(item.title);
   const [background, setBackground] = useState(item.background ?? "");
   const [objectives, setObjectives] = useState(item.objectives ?? "");
+  const [beneficiary, setBeneficiary] = useState(item.beneficiary ?? "");
   const [description, setDescription] = useState(item.description);
   const [needsFunding, setNeedsFunding] = useState(item.needsFunding ?? false);
   const [isPic, setIsPic] = useState(item.isPic ?? true);
   const [skills, setSkills] = useState<string[]>(item.skills ?? []);
   const [skillInput, setSkillInput] = useState("");
+  const [interactingSectors, setInteractingSectors] = useState<Sector[]>(
+    item.interactingSectors ?? [],
+  );
   const [status, setStatus] = useState<ActionStatus>(item.status);
   const [hasDeadline, setHasDeadline] = useState(
     Boolean(item.startDate || item.endDate),
@@ -140,6 +148,14 @@ export function ActionEditForm({
     setMembers((current) => current.filter((m) => m.id !== id));
   }
 
+  function toggleSector(sector: Sector) {
+    setInteractingSectors((current) =>
+      current.includes(sector)
+        ? current.filter((s) => s !== sector)
+        : [...current, sector],
+    );
+  }
+
   const descriptionRemaining = DESC_MAX - description.length;
 
   const [pending, startTransition] = useTransition();
@@ -151,10 +167,12 @@ export function ActionEditForm({
       title,
       background: background || undefined,
       objectives: objectives || undefined,
+      beneficiary: beneficiary || undefined,
       description,
       needsFunding,
       isPic,
       skills,
+      interactingSectors,
       status,
       startDate: hasDeadline && startDate ? startDate : undefined,
       endDate: hasDeadline && hasEndDate && endDate ? endDate : undefined,
@@ -165,10 +183,12 @@ export function ActionEditForm({
         title,
         background: background || undefined,
         objectives: objectives || undefined,
+        beneficiary: beneficiary || undefined,
         description,
         needsFunding,
         isPic,
         skills,
+        interactingSectors,
         status,
         startDate:
           hasDeadline && startDate
@@ -314,6 +334,20 @@ export function ActionEditForm({
           />
         </div>
 
+        <div className="flex flex-col gap-1">
+          <label className={labelClass} htmlFor="beneficiary">
+            Penerima Manfaat
+          </label>
+          <textarea
+            className={textareaClass}
+            id="beneficiary"
+            name="beneficiary"
+            rows={3}
+            value={beneficiary}
+            onChange={(e) => setBeneficiary(e.target.value)}
+          />
+        </div>
+
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <label className={labelClass} htmlFor="description">
@@ -338,6 +372,41 @@ export function ActionEditForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Icon name="hub" className="text-[20px] text-primary" />
+            <span className="font-label-md text-label-md text-on-surface">
+              Interaksi Antar Sektor
+            </span>
+          </div>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">
+            Pilih sektor yang berinteraksi dalam program ini (opsional, boleh lebih dari satu).
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {sectorOptions.map((option) => {
+              const active = interactingSectors.includes(option.value);
+              return (
+                <label key={option.value} className="cursor-pointer">
+                  <input
+                    checked={active}
+                    className="peer sr-only"
+                    name="interactingSectors"
+                    type="checkbox"
+                    value={option.value}
+                    onChange={() => toggleSector(option.value)}
+                  />
+                  <div
+                    className={`h-full flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm text-center transition-all ${sectorActivePillClass[option.value]}`}
+                  >
+                    <Icon name={option.icon} className="text-[16px]" filled={active} />
+                    <span className="leading-tight">{option.label}</span>
+                  </div>
+                </label>
+              );
+            })}
+          </div>
         </div>
 
         <div className="flex items-start justify-between border-t border-outline-variant/20 pt-4 -mt-2">

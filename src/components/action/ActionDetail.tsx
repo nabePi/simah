@@ -11,6 +11,7 @@ import type { Contribution } from "./action-items-data";
 import type { ActionItem } from "./action-items-data";
 import { ContributeModal } from "./ContributeModal";
 import { ManifestasiDetailModal } from "./ManifestasiDetailModal";
+import { sectorOptions } from "./sector-options";
 
 const statusLabel: Record<string, string> = {
   todo: "Belum Dimulai",
@@ -305,6 +306,17 @@ export function ActionDetail({
                 </p>
               </div>
             )}
+            {item.beneficiary && (
+              <div className="flex flex-col gap-1">
+                <p className="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1">
+                  <Icon name="volunteer_activism" className="text-[16px]" />
+                  Penerima Manfaat
+                </p>
+                <p className="font-body-md text-body-md text-on-surface">
+                  {item.beneficiary}
+                </p>
+              </div>
+            )}
             <div className="flex flex-col gap-1">
               <p className="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1">
                 <Icon name="short_text" className="text-[16px]" />
@@ -314,6 +326,28 @@ export function ActionDetail({
                 {item.description}
               </p>
             </div>
+            {item.interactingSectors && item.interactingSectors.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <p className="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1">
+                  <Icon name="hub" className="text-[16px]" />
+                  Interaksi Antar Sektor
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {item.interactingSectors.map((sector: string) => {
+                    const option = sectorOptions.find((o) => o.value === sector);
+                    return (
+                      <span
+                        key={sector}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full border font-label-sm text-label-sm ${sectorBadgeClass[sector as "pendidikan" | "ekonomi" | "profesional"]}`}
+                      >
+                        <Icon name={option?.icon ?? "circle"} className="text-[12px]" />
+                        {sectorLabel[sector]}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             <div className="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm border-t border-outline-variant/20 pt-4">
               <Icon name="schedule" className="text-[16px]" />
               <span>{getDurationNarrative(item.startDate, item.endDate)}</span>

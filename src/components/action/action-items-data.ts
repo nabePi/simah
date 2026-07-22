@@ -1,4 +1,4 @@
-import type { Participant } from "@/components/directory/participants-data";
+import type { Participant, Sector } from "@/components/directory/participants-data";
 
 export type ActionStatus = "todo" | "in_progress" | "done";
 
@@ -14,6 +14,8 @@ export type ActionItem = {
   votes: number;
   background?: string;
   objectives?: string;
+  beneficiary?: string;
+  interactingSectors?: Sector[];
   needsFunding?: boolean;
   isPic?: boolean;
   skills?: string[];
@@ -42,6 +44,8 @@ export type DraftItem = {
   title: string;
   background: string;
   objectives: string;
+  beneficiary: string;
+  interactingSectors: Sector[];
   description: string;
   status: ActionStatus;
   needsFunding: boolean;

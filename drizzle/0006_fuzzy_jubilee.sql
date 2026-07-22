@@ -1,0 +1,1 @@
+ALTER TABLE "actions" ADD COLUMN "interacting_sectors" text[] DEFAULT '{}';

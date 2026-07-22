@@ -52,6 +52,12 @@ export default async function EditDraftActionPage({
           title: draft.title,
           background: draft.background ?? "",
           objectives: draft.objectives ?? "",
+          beneficiary: draft.beneficiary ?? "",
+          interactingSectors: (draft.interactingSectors ?? []) as (
+            | "pendidikan"
+            | "ekonomi"
+            | "profesional"
+          )[],
           description: draft.description,
           status: draft.status as "todo" | "in_progress" | "done",
           needsFunding: draft.needsFunding ?? false,

@@ -12,6 +12,11 @@ import { Icon } from "@/components/ui/Icon";
 import { Avatar } from "@/components/ui/Avatar";
 import { BackAppBar } from "@/components/layout/BackAppBar";
 import type { ActionStatus } from "./action-items-data";
+import type { Sector } from "@/components/directory/participants-data";
+import {
+  sectorOptions,
+  sectorActivePillClass,
+} from "./sector-options";
 import { createDraft, updateDraft } from "@/actions/actions-item";
 import { generateActionDescription, generateActionSkills } from "@/actions/ai";
 import { ManifestasiDetailModal } from "./ManifestasiDetailModal";
@@ -26,11 +31,13 @@ export type ActionItemFormInitialValues = {
   title: string;
   background: string;
   objectives: string;
+  beneficiary: string;
   description: string;
   status: ActionStatus;
   needsFunding: boolean;
   isPic: boolean;
   skills: string[];
+  interactingSectors?: Sector[];
   hasDeadline: boolean;
   startDate?: string;
   hasEndDate?: boolean;
@@ -106,11 +113,15 @@ export function ActionItemForm({
   const [title, setTitle] = useState(initialValues?.title ?? "");
   const [background, setBackground] = useState(initialValues?.background ?? "");
   const [objectives, setObjectives] = useState(initialValues?.objectives ?? "");
+  const [beneficiary, setBeneficiary] = useState(initialValues?.beneficiary ?? "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
   const [needsFunding, setNeedsFunding] = useState(initialValues?.needsFunding ?? false);
   const [isPic, setIsPic] = useState(initialValues?.isPic ?? true);
   const [skills, setSkills] = useState<string[]>(initialValues?.skills ?? []);
   const [skillInput, setSkillInput] = useState("");
+  const [interactingSectors, setInteractingSectors] = useState<Sector[]>(
+    initialValues?.interactingSectors ?? [],
+  );
   const [status, setStatus] = useState<ActionStatus>(initialValues?.status ?? "todo");
   const [hasDeadline, setHasDeadline] = useState(initialValues?.hasDeadline ?? true);
   const [startDate, setStartDate] = useState(initialValues?.startDate ?? "");
@@ -122,6 +133,7 @@ export function ActionItemForm({
     title: false,
     background: false,
     objectives: false,
+    beneficiary: false,
   });
   const [generatingSkills, setGeneratingSkills] = useState(false);
   const [skillsError, setSkillsError] = useState<string | null>(null);
@@ -142,6 +154,14 @@ export function ActionItemForm({
     setSkills((current) => current.filter((item) => item !== skill));
   }
 
+  function toggleSector(sector: Sector) {
+    setInteractingSectors((current) =>
+      current.includes(sector)
+        ? current.filter((s) => s !== sector)
+        : [...current, sector],
+    );
+  }
+
   async function handleGenerateSkills() {
     if (generatingSkills) return;
 
@@ -151,14 +171,14 @@ export function ActionItemForm({
       objectives: objectives.trim().length === 0,
     };
     if (missing.title || missing.background || missing.objectives) {
-      setRequiredFieldErrors(missing);
+      setRequiredFieldErrors({ ...missing, beneficiary: false });
       setSkillsError(
         "Lengkapi Judul Action Item, Latar Belakang, dan Tujuan / Output terlebih dahulu.",
       );
       return;
     }
 
-    setRequiredFieldErrors({ title: false, background: false, objectives: false });
+    setRequiredFieldErrors({ title: false, background: false, objectives: false, beneficiary: false });
     setSkillsError(null);
     setGeneratingSkills(true);
     try {
@@ -193,14 +213,14 @@ export function ActionItemForm({
       objectives: objectives.trim().length === 0,
     };
     if (missing.title || missing.background || missing.objectives) {
-      setRequiredFieldErrors(missing);
+      setRequiredFieldErrors({ ...missing, beneficiary: false });
       setDescError(
         "Lengkapi Judul Action Item, Latar Belakang, dan Tujuan / Output terlebih dahulu.",
       );
       return;
     }
 
-    setRequiredFieldErrors({ title: false, background: false, objectives: false });
+    setRequiredFieldErrors({ title: false, background: false, objectives: false, beneficiary: false });
     setDescError(null);
     setGenerating(true);
     try {
@@ -225,25 +245,28 @@ export function ActionItemForm({
       title: title.trim().length === 0,
       background: background.trim().length === 0,
       objectives: objectives.trim().length === 0,
+      beneficiary: beneficiary.trim().length === 0,
     };
-    if (missing.title || missing.background || missing.objectives) {
-      setRequiredFieldErrors(missing);
+    if (missing.title || missing.background || missing.objectives || missing.beneficiary) {
+      setRequiredFieldErrors({ ...missing, beneficiary: false });
       setShowRequiredModal(true);
       setSubmitted(false);
       return;
     }
-    setRequiredFieldErrors({ title: false, background: false, objectives: false });
+    setRequiredFieldErrors({ title: false, background: false, objectives: false, beneficiary: false });
     setSubmitted(true);
     startTransition(async () => {
       const payload = {
         title,
         background,
         objectives,
+        beneficiary,
         description,
         status,
         needsFunding,
         isPic,
         skills,
+        interactingSectors,
         hasDeadline,
         startDate: startDate || undefined,
         hasEndDate,
@@ -271,10 +294,13 @@ export function ActionItemForm({
     ? title !== (initialValues?.title ?? "") ||
       background !== (initialValues?.background ?? "") ||
       objectives !== (initialValues?.objectives ?? "") ||
+      beneficiary !== (initialValues?.beneficiary ?? "") ||
       description !== (initialValues?.description ?? "") ||
       needsFunding !== (initialValues?.needsFunding ?? false) ||
       isPic !== (initialValues?.isPic ?? true) ||
       skills.join("|") !== (initialValues?.skills ?? []).join("|") ||
+      interactingSectors.join("|") !==
+        (initialValues?.interactingSectors ?? []).join("|") ||
       status !== (initialValues?.status ?? "todo") ||
       hasDeadline !== (initialValues?.hasDeadline ?? true) ||
       startDate !== (initialValues?.startDate ?? "") ||
@@ -287,6 +313,7 @@ export function ActionItemForm({
     : title.trim().length > 0 ||
       background.trim().length > 0 ||
       objectives.trim().length > 0 ||
+      beneficiary.trim().length > 0 ||
       description.trim().length > 0 ||
       needsFunding ||
       isPic !== true ||
@@ -591,6 +618,36 @@ export function ActionItemForm({
           )}
         </div>
 
+        <div className="flex flex-col gap-1">
+          <label
+            className={`${labelClass} ${requiredFieldErrors.beneficiary ? "text-error" : ""}`}
+            htmlFor="beneficiary"
+          >
+            Penerima Manfaat
+          </label>
+          <textarea
+            className={`${textareaClass} ${requiredFieldErrors.beneficiary ? "border-error focus:border-error focus:ring-error" : ""}`}
+            id="beneficiary"
+            name="beneficiary"
+            placeholder="Siapa yang menerima manfaat dari action / project ini..."
+            rows={3}
+            value={beneficiary}
+            onChange={(event) => {
+              setBeneficiary(event.target.value);
+              if (requiredFieldErrors.beneficiary && event.target.value.trim()) {
+                setRequiredFieldErrors((current) => ({ ...current, beneficiary: false }));
+              }
+            }}
+          />
+          <p
+            className={`font-caption text-caption ${requiredFieldErrors.beneficiary ? "text-error" : "text-on-surface-variant/70"}`}
+          >
+            {requiredFieldErrors.beneficiary
+              ? "Wajib diisi."
+              : "Sebutkan siapa penerima manfaat agar program bukan ide mengambang."}
+          </p>
+        </div>
+
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <label className={labelClass} htmlFor="description">
@@ -641,6 +698,41 @@ export function ActionItemForm({
               value={description}
               onChange={(event) => setDescription(event.target.value)}
             />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Icon name="hub" className="text-[20px] text-primary" />
+            <span className="font-label-md text-label-md text-on-surface">
+              Interaksi Antar Sektor
+            </span>
+          </div>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">
+            Pilih sektor yang berinteraksi dalam program ini (opsional, boleh lebih dari satu).
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {sectorOptions.map((option) => {
+              const active = interactingSectors.includes(option.value);
+              return (
+                <label key={option.value} className="cursor-pointer">
+                  <input
+                    checked={active}
+                    className="peer sr-only"
+                    name="interactingSectors"
+                    type="checkbox"
+                    value={option.value}
+                    onChange={() => toggleSector(option.value)}
+                  />
+                  <div
+                    className={`h-full flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm text-center transition-all ${sectorActivePillClass[option.value]}`}
+                  >
+                    <Icon name={option.icon} className="text-[16px]" filled={active} />
+                    <span className="leading-tight">{option.label}</span>
+                  </div>
+                </label>
+              );
+            })}
           </div>
         </div>
 
@@ -950,8 +1042,8 @@ export function ActionItemForm({
                 Lengkapi wajib diisi
               </h3>
               <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
-                Judul Action Item, Latar Belakang, dan Tujuan / Output wajib
-                diisi sebelum menyimpan.
+                Judul Action Item, Latar Belakang, Tujuan / Output, dan
+                Penerima Manfaat wajib diisi sebelum menyimpan.
               </p>
             </div>
             <button

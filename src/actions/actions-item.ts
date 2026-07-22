@@ -6,6 +6,7 @@ import { actions, votes, contributions, notifications, users } from "@/db/schema
 import { and, eq, sql } from "drizzle-orm";
 import { auth } from "@/auth/config";
 import { fetchManifestasiDetail } from "@/lib/queries";
+import type { Sector } from "@/components/directory/participants-data";
 
 async function requireUser() {
   const session = await auth();
@@ -124,11 +125,13 @@ export async function createDraft(input: {
   title: string;
   background: string;
   objectives: string;
+  beneficiary: string;
   description: string;
   status: "todo" | "in_progress" | "done";
   needsFunding: boolean;
   isPic: boolean;
   skills: string[];
+  interactingSectors: Sector[];
   hasDeadline: boolean;
   startDate?: string;
   hasEndDate?: boolean;
@@ -149,6 +152,7 @@ export async function createDraft(input: {
       needsFunding: input.needsFunding,
       isPic: input.isPic,
       skills: input.skills,
+      interactingSectors: input.interactingSectors,
       createdById: userId,
       isPublished: false,
       manifestasiId: input.manifestasiId ?? null,
@@ -181,11 +185,13 @@ export async function updateDraft(
     title: string;
     background: string;
     objectives: string;
+    beneficiary: string;
     description: string;
     status: "todo" | "in_progress" | "done";
     needsFunding: boolean;
     isPic: boolean;
     skills: string[];
+    interactingSectors: Sector[];
     hasDeadline: boolean;
     startDate?: string;
     hasEndDate?: boolean;
@@ -212,10 +218,12 @@ export async function updateDraft(
       description: input.description.trim() || input.title.trim(),
       background: input.background || null,
       objectives: input.objectives || null,
+      beneficiary: input.beneficiary.trim() || null,
       status: input.status,
       needsFunding: input.needsFunding,
       isPic: input.isPic,
       skills: input.skills,
+      interactingSectors: input.interactingSectors,
       manifestasiId: input.manifestasiId ?? null,
       breakdownId: input.breakdownId ?? null,
       startDate:
