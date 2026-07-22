@@ -664,7 +664,7 @@ export function ActionEditForm({
         />
       )}
 
-      <div className="fixed bottom-[4rem] md:bottom-0 left-0 w-full p-3 md:p-4 bg-surface/95 backdrop-blur-md border-t border-outline-variant/20 z-40 md:relative md:bg-transparent md:border-0 md:backdrop-blur-none">
+      <div className="fixed bottom-0 left-0 w-full px-3 pt-3 pb-[4.25rem] md:p-4 bg-surface/95 backdrop-blur-md border-t border-outline-variant/20 z-40 md:relative md:bg-transparent md:border-0 md:backdrop-blur-none">
         <div className="flex gap-2 max-w-2xl mx-auto w-full">
           <button
             type="button"
