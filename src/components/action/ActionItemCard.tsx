@@ -92,8 +92,8 @@ export function ActionItemCard({
           aria-label={voted ? "Batalkan dukungan" : "Dukung gagasan ini"}
           className={
             voted
-              ? "flex flex-col items-center justify-center p-2 rounded-lg bg-primary-container text-on-primary-container transition-colors"
-              : "flex flex-col items-center justify-center p-2 rounded-lg bg-surface-container hover:bg-primary-container hover:text-on-primary-container transition-colors group"
+              ? "flex flex-col items-center justify-center gap-1 min-w-[3.5rem] p-2 rounded-lg bg-primary-container text-on-primary-container ring-1 ring-primary/40 shadow-sm transition-all active:scale-95"
+              : "flex flex-col items-center justify-center gap-1 min-w-[3.5rem] p-2 rounded-lg bg-primary/5 text-primary border border-primary/40 shadow-sm hover:bg-primary/10 hover:border-primary active:scale-95 transition-all group"
           }
           type="button"
           onClick={onToggleVote}
@@ -101,20 +101,11 @@ export function ActionItemCard({
           <Icon
             name="thumb_up"
             filled={voted}
-            className={
-              voted
-                ? ""
-                : "text-outline group-hover:text-on-primary-container transition-colors"
-            }
+            className="text-[22px] transition-transform group-hover:scale-110"
           />
-          <span
-            className={`font-label-md text-label-md mt-1 ${
-              voted
-                ? ""
-                : "text-outline group-hover:text-on-primary-container transition-colors"
-            }`}
-          >
-            {voteCount}
+          <span className="font-label-md text-label-md">{voteCount}</span>
+          <span className="font-caption text-caption leading-none opacity-80">
+            {voted ? "Disukai" : "Vote"}
           </span>
         </button>
       </div>
