@@ -17,7 +17,7 @@ import {
   sectorOptions,
   sectorActivePillClass,
 } from "./sector-options";
-import { createDraft, updateDraft } from "@/actions/actions-item";
+import { createDraft, updateDraft, updateOwnAction } from "@/actions/actions-item";
 import { generateActionDescription, generateActionSkills } from "@/actions/ai";
 import { ManifestasiDetailModal } from "./ManifestasiDetailModal";
 
@@ -85,11 +85,13 @@ export function ActionItemForm({
   manifestasiOptions = [],
   currentUser,
   draftId,
+  publishedActionId,
   initialValues,
 }: {
   manifestasiOptions?: ManifestasiOption[];
   currentUser?: { name: string; avatarUrl?: string };
   draftId?: number;
+  publishedActionId?: number;
   initialValues?: ActionItemFormInitialValues;
 }) {
   const router = useRouter();
@@ -278,15 +280,21 @@ export function ActionItemForm({
           ? Number(selectedBreakdownId)
           : undefined,
       };
-      const res = draftId
-        ? await updateDraft(draftId, payload)
-        : await createDraft(payload);
+      const res = publishedActionId
+        ? await updateOwnAction(publishedActionId, payload)
+        : draftId
+          ? await updateDraft(draftId, payload)
+          : await createDraft(payload);
       if (res?.error) {
         setSubmitted(false);
         alert(res.error);
         return;
       }
-      router.push("/action/drafts");
+      if (publishedActionId && res?.id) {
+        router.push(`/action/${res.id}`);
+      } else {
+        router.push("/action/drafts");
+      }
     });
   }
 
@@ -355,13 +363,17 @@ export function ActionItemForm({
 
   return (
     <>
-      <BackAppBar title={draftId ? "Edit Action Item" : "Action Item"} onBack={requestBack} />
+      <BackAppBar title={publishedActionId ? "Edit Action" : draftId ? "Edit Action Item" : "Action Item"} onBack={requestBack} />
       <main className="flex-grow py-stack-md pb-44 md:pb-6 md:pl-64">
         <div className="px-container-margin flex flex-col gap-stack-lg max-w-4xl mx-auto w-full md:max-w-2xl">
           <form className="flex flex-col gap-stack-lg" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-2">
               <h1 className="font-headline-lg text-headline-lg text-on-surface">
-                {draftId ? "Edit Action Item" : "Action Item Baru"}
+                {publishedActionId
+                  ? "Edit Action"
+                  : draftId
+                    ? "Edit Action Item"
+                    : "Action Item Baru"}
               </h1>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
                 Lengkapi detail berikut agar kolaborator lintas sektor dapat

@@ -2,6 +2,7 @@
 
 import { Fragment, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { BackAppBar } from "@/components/layout/BackAppBar";
@@ -199,7 +200,7 @@ export function ActionDetail({
 
   return (
     <>
-      {!embedded && <BackAppBar title="Action Detail" onBack={() => router.back()} />}
+      {!embedded && <BackAppBar title="Action Detail" onBack={() => router.push("/action")} />}
       <Wrapper {...wrapperProps}>
         <div className={`px-container-margin flex flex-col gap-stack-lg max-w-4xl mx-auto w-full md:max-w-2xl ${embedded ? "py-stack-md pb-6" : ""}`}>
           <section className="flex flex-col gap-3">
@@ -209,19 +210,31 @@ export function ActionDetail({
               >
                 {statusLabel[item.status]}
               </span>
-              <button
-                type="button"
-                onClick={handleShare}
-                aria-label="Bagikan action"
-                className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-highest active:scale-95 transition-all"
-              >
-                <Icon
-                  name={copied ? "check" : "share"}
-                  className="text-[14px]"
-                  filled={copied}
-                />
-                {copied ? "Tersalin" : "Bagikan"}
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                {currentUserId && currentUserId === item.createdById && (
+                  <Link
+                    href={`/action/${item.id}/edit`}
+                    aria-label="Edit action"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm hover:bg-primary/90 active:scale-95 transition-all"
+                  >
+                    <Icon name="edit" className="text-[14px]" />
+                    Edit
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  aria-label="Bagikan action"
+                  className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-highest active:scale-95 transition-all"
+                >
+                  <Icon
+                    name={copied ? "check" : "share"}
+                    className="text-[14px]"
+                    filled={copied}
+                  />
+                  {copied ? "Tersalin" : "Bagikan"}
+                </button>
+              </div>
             </div>
             <h1 className="font-headline-lg text-headline-lg text-on-surface">
               {item.title}

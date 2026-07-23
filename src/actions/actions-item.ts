@@ -302,3 +302,67 @@ export async function deleteDraft(id: number): Promise<{ error?: string }> {
   revalidatePath("/action/drafts");
   return {};
 }
+
+export async function updateOwnAction(
+  id: number,
+  input: {
+    title: string;
+    background: string;
+    objectives: string;
+    beneficiary: string;
+    description: string;
+    status: "todo" | "in_progress" | "done";
+    needsFunding: boolean;
+    isPic: boolean;
+    skills: string[];
+    interactingSectors: Sector[];
+    hasDeadline: boolean;
+    startDate?: string;
+    hasEndDate?: boolean;
+    endDate?: string;
+    manifestasiId?: number;
+    breakdownId?: number;
+  },
+): Promise<{ id?: number; error?: string }> {
+  const { userId } = await requireUser();
+  if (!input.title.trim()) return { error: "Judul wajib diisi." };
+  const [row] = await db
+    .select({ createdById: actions.createdById, isPublished: actions.isPublished })
+    .from(actions)
+    .where(eq(actions.id, id))
+    .limit(1);
+  if (!row) return { error: "Action tidak ditemukan." };
+  if (row.createdById !== userId) return { error: "Tidak diizinkan." };
+  if (!row.isPublished) return { error: "Action belum dipublish." };
+
+  await db
+    .update(actions)
+    .set({
+      title: input.title.trim(),
+      description: input.description.trim() || input.title.trim(),
+      background: input.background || null,
+      objectives: input.objectives || null,
+      beneficiary: input.beneficiary.trim() || null,
+      status: input.status,
+      needsFunding: input.needsFunding,
+      isPic: input.isPic,
+      skills: input.skills,
+      interactingSectors: input.interactingSectors,
+      manifestasiId: input.manifestasiId ?? null,
+      breakdownId: input.breakdownId ?? null,
+      startDate:
+        input.hasDeadline && input.startDate
+          ? new Date(input.startDate).toISOString().slice(0, 10)
+          : null,
+      endDate:
+        input.hasDeadline && input.hasEndDate && input.endDate
+          ? new Date(input.endDate).toISOString().slice(0, 10)
+          : null,
+      updatedAt: new Date(),
+    })
+    .where(eq(actions.id, id));
+  revalidatePath("/action");
+  revalidatePath(`/action/${id}`);
+  revalidatePath("/notifications");
+  return { id };
+}
