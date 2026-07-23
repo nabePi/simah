@@ -17,7 +17,10 @@ type Props = {
   onToggleBlock: (id: number) => void;
   onDelete: (id: number) => void;
   onResetPassword: (id: number) => void;
-  onImport: (rows: { nama: string; wa: string; sektor: string }[]) => void;
+  onImport: (
+    rows: { nama: string; wa: string; sektor: string }[],
+    totalCount: number
+  ) => void;
   onAddUser: (input: { nama: string; wa: string; sektor: string }) => void;
 };
 
@@ -254,9 +257,10 @@ export function UsersSection({
 
       {showImport && (
         <ImportCsvInline
+          existingWaNumbers={users.map((u) => u.waNumber)}
           onClose={() => setShowImport(false)}
-          onSubmit={(rows) => {
-            onImport(rows);
+          onSubmit={(rows, totalCount) => {
+            onImport(rows, totalCount);
             setShowImport(false);
           }}
         />
@@ -388,13 +392,23 @@ function SectorFilter({
 function ImportCsvInline({
   onClose,
   onSubmit,
+  existingWaNumbers,
 }: {
   onClose: () => void;
-  onSubmit: (rows: { nama: string; wa: string; sektor: string }[]) => void;
+  onSubmit: (
+    rows: { nama: string; wa: string; sektor: string }[],
+    totalCount: number
+  ) => void;
+  existingWaNumbers: string[];
 }) {
   const [error, setError] = useState<string | null>(null);
   const [rows, setRows] = useState<
-    { nama: string; wa: string; sektor: string; valid: boolean }[]
+    {
+      nama: string;
+      wa: string;
+      sektor: string;
+      status: "ok" | "duplicate" | "error";
+    }[]
   >([]);
 
   function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
@@ -421,22 +435,35 @@ function ImportCsvInline({
       }
       const validSectors = ["pendidikan", "ekonomi", "profesional"];
       const sectorAliases: Record<string, string> = {};
+      const existingSet = new Set(existingWaNumbers);
+      const seenWa = new Set<string>();
 
       const parsed = lines.slice(1).map((line) => {
         const cols = line.split(",").map((c) => c.trim());
         const rawSektor = (cols[sektorIdx] ?? "").toLowerCase();
         const sektor = sectorAliases[rawSektor] ?? rawSektor;
-        return {
-          nama: cols[namaIdx] ?? "",
-          wa: cols[waIdx] ?? "",
-          sektor,
-          valid: validSectors.includes(sektor) && (cols[namaIdx] ?? "") !== "",
-        };
+        const nama = cols[namaIdx] ?? "";
+        const wa = cols[waIdx] ?? "";
+        const formatValid =
+          validSectors.includes(sektor) && nama !== "" && wa !== "";
+
+        let status: "ok" | "duplicate" | "error";
+        if (!formatValid) {
+          status = "error";
+        } else if (existingSet.has(wa) || seenWa.has(wa)) {
+          status = "duplicate";
+        } else {
+          status = "ok";
+          seenWa.add(wa);
+        }
+        return { nama, wa, sektor, status };
       });
       setRows(parsed);
     };
     reader.readAsText(file);
   }
+
+  const okRows = rows.filter((r) => r.status === "ok");
 
   return (
     <div className="glass-card rounded-2xl p-6 flex flex-col gap-4">
@@ -497,17 +524,25 @@ function ImportCsvInline({
                   <td className="px-3 py-2">
                     <span
                       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-caption text-caption ${
-                        row.valid
-                          ? "text-status-done"
-                          : "text-error"
+                        row.status === "ok" ? "text-status-done" : "text-error"
                       }`}
                     >
                       <Icon
-                        name={row.valid ? "check_circle" : "warning"}
+                        name={
+                          row.status === "ok"
+                            ? "check_circle"
+                            : row.status === "duplicate"
+                              ? "content_copy"
+                              : "warning"
+                        }
                         filled
                         className="text-[14px]"
                       />
-                      {row.valid ? "OK" : "Lewati"}
+                      {row.status === "ok"
+                        ? "OK"
+                        : row.status === "duplicate"
+                          ? "Duplikat"
+                          : "Error"}
                     </span>
                   </td>
                 </tr>
@@ -526,20 +561,17 @@ function ImportCsvInline({
         </button>
         <button
           type="button"
-          disabled={rows.filter((r) => r.valid).length === 0}
+          disabled={okRows.length === 0}
           onClick={() =>
             onSubmit(
-              rows
-                .filter((r) => r.valid)
-                .map((r) => ({ nama: r.nama, wa: r.wa, sektor: r.sektor }))
+              okRows.map((r) => ({ nama: r.nama, wa: r.wa, sektor: r.sektor })),
+              rows.length
             )
           }
           className="h-10 px-4 rounded-lg font-label-md text-label-md bg-primary text-on-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           Tambah{" "}
-          {rows.filter((r) => r.valid).length > 0
-            ? `${rows.filter((r) => r.valid).length} User`
-            : ""}
+          {okRows.length > 0 ? `${okRows.length} User` : ""}
         </button>
       </div>
     </div>

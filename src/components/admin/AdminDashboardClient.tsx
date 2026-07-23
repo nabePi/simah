@@ -55,6 +55,12 @@ export function AdminDashboardClient({
   const [importedPasswords, setImportedPasswords] = useState<ImportedUser[] | null>(null);
   const [resetPasswordUser, setResetPasswordUser] = useState<ImportedUser | null>(null);
   const [sendToast, setSendToast] = useState<number | null>(null);
+  const [errorPopup, setErrorPopup] = useState<string | null>(null);
+  const [importSummary, setImportSummary] = useState<{
+    success: number;
+    fail: number;
+    passwords: ImportedUser[];
+  } | null>(null);
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -105,21 +111,23 @@ export function AdminDashboardClient({
   }
 
   async function handleImport(
-    rows: { nama: string; wa: string; sektor: string }[]
+    rows: { nama: string; wa: string; sektor: string }[],
+    totalCount: number
   ) {
     const res = await importUsers(rows);
-    if (res?.error) {
-      alert(res.error);
-      return;
-    }
-    if (res.users && res.users.length > 0) {
-      const newRows: AdminUserRow[] = res.users.map((u) => {
+    const successUsers = res.users ?? [];
+    if (successUsers.length > 0) {
+      const newRows: AdminUserRow[] = successUsers.map((u) => {
         const sector = rows.find((r) => r.nama.trim() === u.name)?.sektor;
         return buildAdminRow(u, sector);
       });
       setUsersList((prev) => [...prev, ...newRows]);
-      setImportedPasswords(res.users);
     }
+    setImportSummary({
+      success: successUsers.length,
+      fail: totalCount - successUsers.length,
+      passwords: successUsers,
+    });
   }
 
   async function handleAddUser(input: {
@@ -129,7 +137,7 @@ export function AdminDashboardClient({
   }) {
     const res = await createUser(input);
     if (res?.error) {
-      alert(res.error);
+      setErrorPopup(res.error);
       return;
     }
     if (res.user) {
@@ -313,6 +321,104 @@ export function AdminDashboardClient({
                 Pesan terkirim ke {sendToast} penerima.
               </p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {errorPopup !== null && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-on-background/60 p-6"
+          role="alertdialog"
+          aria-live="assertive"
+          onClick={() => setErrorPopup(null)}
+        >
+          <div
+            className="bg-surface rounded-2xl p-6 max-w-sm w-full flex flex-col items-center gap-4 shadow-lg relative"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              aria-label="Tutup"
+              onClick={() => setErrorPopup(null)}
+              className="absolute top-3 right-3 p-1.5 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors"
+            >
+              <Icon name="close" />
+            </button>
+
+            <div className="w-16 h-16 rounded-full bg-error-container flex items-center justify-center">
+              <Icon name="error" className="text-[32px] text-error" filled />
+            </div>
+
+            <div className="text-center flex flex-col items-center gap-1">
+              <h3 className="font-headline-md text-headline-md text-on-surface">
+                Gagal menyimpan user
+              </h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant whitespace-pre-line">
+                {errorPopup}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {importSummary && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-on-background/60 p-6"
+          role="status"
+          aria-live="polite"
+          onClick={() => setImportSummary(null)}
+        >
+          <div
+            className="bg-surface rounded-2xl p-6 max-w-sm w-full flex flex-col items-center gap-4 shadow-lg relative"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              aria-label="Tutup"
+              onClick={() => setImportSummary(null)}
+              className="absolute top-3 right-3 p-1.5 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors"
+            >
+              <Icon name="close" />
+            </button>
+
+            <div
+              className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                importSummary.fail > 0 ? "bg-error-container" : "bg-primary-container"
+              }`}
+            >
+              <Icon
+                name={importSummary.fail > 0 ? "error" : "check"}
+                filled
+                className={`text-[32px] ${
+                  importSummary.fail > 0 ? "text-error" : "text-primary"
+                }`}
+              />
+            </div>
+
+            <div className="text-center flex flex-col items-center gap-1">
+              <h3 className="font-headline-md text-headline-md text-on-surface">
+                Import Selesai
+              </h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                {importSummary.success} user berhasil diimport
+                {importSummary.fail > 0
+                  ? `, ${importSummary.fail} gagal (duplikat/error).`
+                  : "."}
+              </p>
+            </div>
+
+            {importSummary.passwords.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setImportedPasswords(importSummary.passwords);
+                  setImportSummary(null);
+                }}
+                className="h-10 px-4 rounded-lg font-label-md text-label-md bg-primary text-on-primary hover:bg-primary/90 transition-colors"
+              >
+                Lihat Password
+              </button>
+            )}
           </div>
         </div>
       )}

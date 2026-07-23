@@ -76,14 +76,20 @@ export async function importUsers(
   }
 
   const created: ImportedUser[] = [];
+  const errors: string[] = [];
   for (const row of valid) {
     const result = await createSingleUser(row);
     if (result.user) {
       created.push(result.user);
+    } else if (result.error) {
+      errors.push(result.error);
     }
   }
   revalidatePath("/admin/dashboard");
-  return { users: created };
+  return {
+    users: created.length > 0 ? created : undefined,
+    error: errors.length > 0 ? errors.join("\n") : undefined,
+  };
 }
 
 async function createSingleUser(row: {
@@ -94,6 +100,15 @@ async function createSingleUser(row: {
   const name = row.nama.trim();
   const waNumber = row.wa.trim();
   const sector = row.sektor.trim() as "pendidikan" | "ekonomi" | "profesional";
+
+  const [existing] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.waNumber, waNumber));
+  if (existing) {
+    return { error: `No WhatsApp ${waNumber} sudah terdaftar.` };
+  }
+
   const defaultPassword = generateDefaultPassword(name, waNumber);
   const [inserted] = await db
     .insert(users)
@@ -103,6 +118,7 @@ async function createSingleUser(row: {
       sector,
       passwordHash: await hashPassword(defaultPassword),
       initials: generateInitials(name),
+      role: "-",
       organization: "-",
       offering: "",
     })
