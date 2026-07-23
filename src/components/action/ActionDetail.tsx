@@ -72,6 +72,7 @@ export function ActionDetail({
   initialContributions = [],
   creatorOverride,
   manifestasi,
+  voters = [],
 }: {
   item: ActionItem;
   embedded?: boolean;
@@ -96,6 +97,7 @@ export function ActionDetail({
     dalil: string;
     contoh: string;
   } | null;
+  voters?: Participant[];
 }) {
   const router = useRouter();
   const [contributions, setContributions] =
@@ -541,6 +543,53 @@ export function ActionDetail({
               {contributions.length === 0 && !creator && (
                 <p className="font-body-sm text-body-sm text-on-surface-variant text-center py-4">
                   Belum ada participant.
+                </p>
+              )}
+            </div>
+          </section>
+
+          <section className="flex flex-col gap-3">
+            <h2 className="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+              <Icon name="thumb_up" className="text-[20px] text-primary" filled />
+              Yang Menyukai
+              <span className="font-label-md text-label-md text-on-surface-variant bg-surface-container-high rounded-full px-2 py-0.5">
+                {voters.length}
+              </span>
+            </h2>
+            <div className="glass-card rounded-xl p-5">
+              {voters.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {voters.map((voter) => (
+                    <button
+                      key={voter.id}
+                      type="button"
+                      aria-label={`Lihat profil ${voter.name}`}
+                      onClick={() => setSelectedParticipant(voter)}
+                      className="flex items-center gap-2 ps-1 pe-3 h-10 rounded-full bg-surface-container-high border border-outline-variant hover:ring-2 hover:ring-primary/40 transition-all"
+                    >
+                      {voter.avatarUrl ? (
+                        <Image
+                          alt={voter.name}
+                          src={voter.avatarUrl}
+                          width={32}
+                          height={32}
+                          unoptimized
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant">
+                          {voter.initials ?? voter.name.slice(0, 2).toUpperCase()}
+                        </span>
+                      )}
+                      <span className="font-label-sm text-label-sm text-on-surface max-w-[8rem] truncate">
+                        {voter.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="font-body-sm text-body-sm text-on-surface-variant text-center py-4">
+                  Belum ada yang menyukai action ini.
                 </p>
               )}
             </div>

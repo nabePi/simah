@@ -7,6 +7,7 @@ import {
   fetchActionById,
   fetchContributionsForAction,
   fetchManifestasiDetail,
+  fetchVotersForAction,
 } from "@/lib/queries";
 import { auth } from "@/auth/config";
 
@@ -43,6 +44,21 @@ export default async function ActionDetailPage({
     : null;
 
   const contributionRows = await fetchContributionsForAction(Number(id));
+  const voterRows = await fetchVotersForAction(Number(id));
+  const voters = voterRows.map((v) => ({
+    id: String(v.userId),
+    name: v.name,
+    sector: (v.sector ?? "profesional") as
+      | "pendidikan"
+      | "ekonomi"
+      | "profesional",
+    role: v.role ?? "",
+    organization: v.organization ?? "-",
+    skills: v.skills ?? [],
+    avatarUrl: v.avatarUrl,
+    initials: v.initials ?? undefined,
+    offering: v.offering ?? "",
+  }));
   const initialContributions = contributionRows.map((c) => ({
     participantId: String(c.participantId),
     name: c.name,
@@ -112,6 +128,7 @@ export default async function ActionDetailPage({
         initialContributions={initialContributions}
         creatorOverride={creatorOverride}
         manifestasi={manifestasiDetail}
+        voters={voters}
       />
       <BottomNavBar />
     </>

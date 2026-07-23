@@ -118,6 +118,37 @@ export async function hasVoted(userId: number, actionId: number): Promise<boolea
   return !!row;
 }
 
+export async function fetchVotersForAction(actionId: number) {
+  const rows = await db
+    .select({
+      userId: votes.userId,
+      name: users.name,
+      avatarUrl: users.avatarUrl,
+      initials: users.initials,
+      role: users.role,
+      sector: users.sector,
+      organization: users.organization,
+      skills: users.skills,
+      offering: users.offering,
+      createdAt: votes.createdAt,
+    })
+    .from(votes)
+    .innerJoin(users, eq(users.id, votes.userId))
+    .where(eq(votes.actionId, actionId))
+    .orderBy(sql`${votes.createdAt} desc`);
+  return rows.map((r) => ({
+    userId: r.userId,
+    name: r.name,
+    avatarUrl: avatarUrlToSrc(r.avatarUrl),
+    initials: r.initials,
+    role: r.role,
+    sector: r.sector,
+    organization: r.organization,
+    skills: r.skills,
+    offering: r.offering,
+  }));
+}
+
 export async function fetchContributionsForAction(actionId: number) {
   const rows = await db
     .select({
