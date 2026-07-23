@@ -83,9 +83,38 @@ export async function toggleVote(
     .update(actions)
     .set({ votes: sql`votes + 1` })
     .where(eq(actions.id, actionId));
+  await notifyActionCreatorOnVote(actionId, userId);
   revalidatePath("/action");
   revalidatePath(`/action/${actionId}`);
+  revalidatePath("/notifications");
   return { voted: true };
+}
+
+async function notifyActionCreatorOnVote(actionId: number, voterId: number) {
+  const [action] = await db
+    .select({ title: actions.title, createdById: actions.createdById })
+    .from(actions)
+    .where(eq(actions.id, actionId))
+    .limit(1);
+  if (!action) return;
+  if (action.createdById === voterId) return;
+
+  const [voter] = await db
+    .select({ name: users.name })
+    .from(users)
+    .where(eq(users.id, voterId))
+    .limit(1);
+  const voterName = voter?.name ?? "Seorang peserta";
+
+  await db.insert(notifications).values({
+    userId: action.createdById,
+    type: "text",
+    variant: "info",
+    title: "Vote Baru",
+    body: `${voterName} menyukai action "${action.title}".`,
+    actorId: voterId,
+    read: false,
+  });
 }
 
 export async function createContribution(
