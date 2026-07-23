@@ -13,9 +13,13 @@ type ImportedUser = {
 export function ImportPasswordSheet({
   users,
   onClose,
+  title = "Default Password",
+  description,
 }: {
   users: ImportedUser[];
   onClose: () => void;
+  title?: string;
+  description?: string;
 }) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
 
@@ -56,11 +60,11 @@ export function ImportPasswordSheet({
                 id="import-password-title"
                 className="font-headline-sm text-headline-sm text-on-surface"
               >
-                Default Password
+                {title}
               </h3>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
-                {users.length} user berhasil diimpor. Salin password bagikan ke
-                masing-masing user.
+                {description ??
+                  `${users.length} user berhasil diimpor. Salin password bagikan ke masing-masing user.`}
               </p>
             </div>
           </div>

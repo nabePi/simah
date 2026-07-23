@@ -157,6 +157,31 @@ export async function deleteUser(id: number): Promise<{ error?: string }> {
   return {};
 }
 
+export async function resetUserPassword(
+  id: number
+): Promise<{ user?: ImportedUser; error?: string }> {
+  await requireAdminSession();
+  const [current] = await db
+    .select({ name: users.name, waNumber: users.waNumber })
+    .from(users)
+    .where(eq(users.id, id));
+  if (!current) return { error: "User tidak ditemukan." };
+
+  const defaultPassword = generateDefaultPassword(current.name, current.waNumber);
+  await db
+    .update(users)
+    .set({
+      passwordHash: await hashPassword(defaultPassword),
+      mustChangePassword: true,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, id));
+  revalidatePath("/admin/dashboard");
+  return {
+    user: { id, name: current.name, waNumber: current.waNumber, defaultPassword },
+  };
+}
+
 export async function updateActionStatus(
   id: number,
   status: "todo" | "in_progress" | "done"

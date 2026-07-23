@@ -10,6 +10,7 @@ import {
   createUser,
   toggleBlockUser,
   deleteUser,
+  resetUserPassword,
   updateActionStatus,
   togglePublishAction,
   deleteAction,
@@ -52,6 +53,7 @@ export function AdminDashboardClient({
   const [notificationsList, setNotificationsList] =
     useState<NotificationItem[]>(initialNotifications);
   const [importedPasswords, setImportedPasswords] = useState<ImportedUser[] | null>(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState<ImportedUser | null>(null);
   const [sendToast, setSendToast] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -89,6 +91,17 @@ export function AdminDashboardClient({
       if (res?.error) alert(res.error);
     });
     setUsersList((prev) => prev.filter((u) => u.id !== id));
+  }
+
+  async function handleResetPassword(id: number) {
+    const res = await resetUserPassword(id);
+    if (res?.error) {
+      alert(res.error);
+      return;
+    }
+    if (res.user) {
+      setResetPasswordUser(res.user);
+    }
   }
 
   async function handleImport(
@@ -230,6 +243,7 @@ export function AdminDashboardClient({
           users={usersList}
           onToggleBlock={handleToggleBlock}
           onDelete={handleDeleteUser}
+          onResetPassword={handleResetPassword}
           onImport={handleImport}
           onAddUser={handleAddUser}
         />
@@ -255,6 +269,15 @@ export function AdminDashboardClient({
         <ImportPasswordSheet
           users={importedPasswords}
           onClose={() => setImportedPasswords(null)}
+        />
+      )}
+
+      {resetPasswordUser && (
+        <ImportPasswordSheet
+          users={[resetPasswordUser]}
+          onClose={() => setResetPasswordUser(null)}
+          title="Password Direset"
+          description={`Password ${resetPasswordUser.name} berhasil direset ke password default. User wajib mengganti password saat login berikutnya.`}
         />
       )}
 

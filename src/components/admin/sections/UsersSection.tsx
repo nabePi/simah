@@ -16,12 +16,13 @@ type Props = {
   users: AdminUserRow[];
   onToggleBlock: (id: number) => void;
   onDelete: (id: number) => void;
+  onResetPassword: (id: number) => void;
   onImport: (rows: { nama: string; wa: string; sektor: string }[]) => void;
   onAddUser: (input: { nama: string; wa: string; sektor: string }) => void;
 };
 
 type PendingAction = {
-  type: "block" | "delete";
+  type: "block" | "delete" | "resetPassword";
   user: AdminUserRow;
 };
 
@@ -36,6 +37,7 @@ export function UsersSection({
   users,
   onToggleBlock,
   onDelete,
+  onResetPassword,
   onImport,
   onAddUser,
 }: Props) {
@@ -211,6 +213,17 @@ export function UsersSection({
                         </button>
                         <button
                           type="button"
+                          aria-label="Reset password user"
+                          title="Reset Password"
+                          onClick={() =>
+                            setPendingAction({ type: "resetPassword", user })
+                          }
+                          className="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:bg-secondary-container transition-colors"
+                        >
+                          <Icon name="lock_reset" />
+                        </button>
+                        <button
+                          type="button"
                           aria-label="Hapus user"
                           title="Hapus"
                           onClick={() =>
@@ -273,8 +286,10 @@ export function UsersSection({
           onConfirm={() => {
             if (pendingAction.type === "block") {
               onToggleBlock(pendingAction.user.id);
-            } else {
+            } else if (pendingAction.type === "delete") {
               onDelete(pendingAction.user.id);
+            } else {
+              onResetPassword(pendingAction.user.id);
             }
             setPendingAction(null);
           }}
@@ -541,24 +556,32 @@ function ConfirmActionModal({
   onConfirm: () => void;
 }) {
   const isDelete = action.type === "delete";
+  const isReset = action.type === "resetPassword";
   const blocked = action.user.status === "blocked";
   const title = isDelete
     ? "Hapus User"
-    : blocked
-      ? "Buka Blokir User"
-      : "Blokir User";
+    : isReset
+      ? "Reset Password"
+      : blocked
+        ? "Buka Blokir User"
+        : "Blokir User";
   const message = isDelete
     ? `Yakin ingin menghapus ${action.user.name}? Tindakan ini tidak dapat dibatalkan.`
-    : blocked
-      ? `Yakin ingin membuka blokir ${action.user.name}?`
-      : `Yakin ingin memblokir ${action.user.name}? User yang diblokir tidak dapat login.`;
+    : isReset
+      ? `Reset password ${action.user.name} ke password default? User wajib mengganti password saat login berikutnya.`
+      : blocked
+        ? `Yakin ingin membuka blokir ${action.user.name}?`
+        : `Yakin ingin memblokir ${action.user.name}? User yang diblokir tidak dapat login.`;
   const confirmLabel = isDelete
     ? "Hapus"
-    : blocked
-      ? "Buka Blokir"
-      : "Blokir";
-  const confirmClass =
-    isDelete || !blocked
+    : isReset
+      ? "Reset"
+      : blocked
+        ? "Buka Blokir"
+        : "Blokir";
+  const confirmClass = isReset
+    ? "bg-secondary text-on-secondary hover:bg-secondary/90"
+    : isDelete || !blocked
       ? "bg-error text-on-error hover:bg-error/90"
       : "bg-primary text-on-primary hover:bg-primary/90";
 
@@ -577,13 +600,23 @@ function ConfirmActionModal({
         <div className="flex items-start gap-3">
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-              isDelete || !blocked
-                ? "bg-error-container text-on-error-container"
-                : "bg-primary-container text-on-primary-container"
+              isReset
+                ? "bg-secondary-container text-on-secondary-container"
+                : isDelete || !blocked
+                  ? "bg-error-container text-on-error-container"
+                  : "bg-primary-container text-on-primary-container"
             }`}
           >
             <Icon
-              name={isDelete ? "delete" : blocked ? "lock_open" : "block"}
+              name={
+                isDelete
+                  ? "delete"
+                  : isReset
+                    ? "lock_reset"
+                    : blocked
+                      ? "lock_open"
+                      : "block"
+              }
               filled
               className="text-[22px]"
             />
