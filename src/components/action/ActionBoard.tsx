@@ -39,10 +39,10 @@ const scopeOptions: { value: Scope; label: string }[] = [
 type SortOption = "created_desc" | "created_asc" | "votes_desc" | "votes_asc";
 
 const sortOptions: { value: SortOption; label: string }[] = [
-  { value: "created_desc", label: "Terbaru Diajukan" },
-  { value: "created_asc", label: "Terlama Diajukan" },
   { value: "votes_desc", label: "Vote Terbanyak" },
   { value: "votes_asc", label: "Vote Tersedikit" },
+  { value: "created_desc", label: "Terbaru Diajukan" },
+  { value: "created_asc", label: "Terlama Diajukan" },
 ];
 
 type ActionBoardProps = {
@@ -67,7 +67,7 @@ export function ActionBoard({
   const [scope, setScope] = useState<Scope>(initialScope);
   const [status, setStatus] = useState<ActionStatus | "all">("all");
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<SortOption>("created_desc");
+  const [sort, setSort] = useState<SortOption>("votes_desc");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const [votedIds, setVotedIds] = useState<Set<string>>(
     () => new Set(initialVotedIds),
