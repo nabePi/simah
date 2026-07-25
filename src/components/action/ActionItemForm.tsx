@@ -43,6 +43,7 @@ export type ActionItemFormInitialValues = {
   hasEndDate?: boolean;
   endDate?: string;
   manifestasiId?: number;
+  manifestasiIds?: number[];
   breakdownId?: number;
 };
 
@@ -95,21 +96,30 @@ export function ActionItemForm({
   initialValues?: ActionItemFormInitialValues;
 }) {
   const router = useRouter();
-  const [selectedManifestasiId, setSelectedManifestasiId] = useState(
-    initialValues?.manifestasiId ? String(initialValues.manifestasiId) : "",
+  const [selectedManifestasiIds, setSelectedManifestasiIds] = useState<number[]>(
+    initialValues?.manifestasiIds && initialValues.manifestasiIds.length > 0
+      ? initialValues.manifestasiIds
+      : initialValues?.manifestasiId ? [initialValues.manifestasiId] : [],
   );
+  const selectedManifestasiId = selectedManifestasiIds[0] ? String(selectedManifestasiIds[0]) : "";
+
+  function toggleManifestasi(id: number) {
+    setSelectedManifestasiIds((current) => {
+      const next = current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id];
+      if (next.length === 0) {
+        setSelectedBreakdownId("");
+      }
+      return next;
+    });
+  }
+
   const [selectedBreakdownId, setSelectedBreakdownId] = useState(
     initialValues?.breakdownId ? String(initialValues.breakdownId) : "",
   );
   const [showManifestasiModal, setShowManifestasiModal] = useState(false);
   const [manifestasiMenuOpen, setManifestasiMenuOpen] = useState(false);
-  const [breakdownMenuOpen, setBreakdownMenuOpen] = useState(false);
-  const selectedManifestasi = manifestasiOptions.find(
-    (m) => String(m.id) === selectedManifestasiId,
-  );
-  const breakdownOptions = (selectedManifestasi?.breakdowns ?? []).filter(
-    (b) => b.label !== null,
-  );
   const skillInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState(initialValues?.title ?? "");
@@ -273,9 +283,8 @@ export function ActionItemForm({
         startDate: startDate || undefined,
         hasEndDate,
         endDate: endDate || undefined,
-        manifestasiId: selectedManifestasiId
-          ? Number(selectedManifestasiId)
-          : undefined,
+        manifestasiId: selectedManifestasiIds[0] ?? undefined,
+        manifestasiIds: selectedManifestasiIds,
         breakdownId: selectedBreakdownId
           ? Number(selectedBreakdownId)
           : undefined,
@@ -314,8 +323,8 @@ export function ActionItemForm({
       startDate !== (initialValues?.startDate ?? "") ||
       hasEndDate !== (initialValues?.hasEndDate ?? true) ||
       endDate !== (initialValues?.endDate ?? "") ||
-      selectedManifestasiId !==
-        (initialValues?.manifestasiId ? String(initialValues.manifestasiId) : "") ||
+      selectedManifestasiIds.join(",") !==
+        (initialValues?.manifestasiIds ?? (initialValues?.manifestasiId ? [initialValues.manifestasiId] : [])).join(",") ||
       selectedBreakdownId !==
         (initialValues?.breakdownId ? String(initialValues.breakdownId) : "")
     : title.trim().length > 0 ||
@@ -391,9 +400,9 @@ export function ActionItemForm({
 
         <div className="flex flex-col gap-2">
           <label className={labelClass} htmlFor="manifestasi">
-            Manifestasi Iwa'
+            Manifestasi Iwa' (Pilih Bebas)
           </label>
-          <input type="hidden" name="manifestasi" value={selectedManifestasiId} />
+          <input type="hidden" name="manifestasi" value={selectedManifestasiIds.join(",")} />
           <div className="relative">
             <button
               type="button"
@@ -404,11 +413,11 @@ export function ActionItemForm({
               className={`${inputClass} flex items-center justify-between gap-2 text-left cursor-pointer`}
             >
               <span
-                className={`truncate ${selectedManifestasiId ? "text-on-surface" : "text-outline"}`}
+                className={`truncate ${selectedManifestasiIds.length > 0 ? "text-on-surface font-medium" : "text-outline"}`}
               >
-                {selectedManifestasi
-                  ? selectedManifestasi.poin
-                  : "Pilih Manifestasi Iwa' (opsional)"}
+                {selectedManifestasiIds.length > 0
+                  ? `${selectedManifestasiIds.length} Manifestasi Iwa' dipilih`
+                  : "Pilih Manifestasi Iwa' (opsional - dapat lebih dari satu)"}
               </span>
               <Icon
                 name="expand_more"
@@ -431,117 +440,125 @@ export function ActionItemForm({
                   <button
                     type="button"
                     role="option"
-                    aria-selected={!selectedManifestasiId}
+                    aria-selected={selectedManifestasiIds.length === 0}
                     onClick={() => {
-                      setSelectedManifestasiId("");
+                      setSelectedManifestasiIds([]);
                       setSelectedBreakdownId("");
-                      setManifestasiMenuOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2 px-4 py-2.5 text-left font-label-md text-label-md transition-colors ${!selectedManifestasiId ? "bg-primary-container text-on-primary-container" : "text-on-surface hover:bg-surface-container-low"}`}
+                    className={`w-full flex items-center gap-2 px-4 py-2.5 text-left font-label-md text-label-md transition-colors ${selectedManifestasiIds.length === 0 ? "bg-primary-container text-on-primary-container font-semibold" : "text-on-surface hover:bg-surface-container-low"}`}
                   >
-                    <span className="text-outline">Kosongkan (opsional)</span>
-                    {!selectedManifestasiId && <Icon name="check" className="ml-auto text-[16px]" />}
+                    <span className="text-outline">Kosongkan Semua</span>
+                    {selectedManifestasiIds.length === 0 && <Icon name="check" className="ml-auto text-[16px]" />}
                   </button>
                   {manifestasiOptions.map((m) => {
-                    const active = String(m.id) === selectedManifestasiId;
+                    const active = selectedManifestasiIds.includes(m.id);
+                    const breakdowns = (m.breakdowns ?? []).filter((b) => b.label !== null);
                     return (
-                      <button
-                        key={m.id}
-                        type="button"
-                        role="option"
-                        aria-selected={active}
-                        onClick={() => {
-                          setSelectedManifestasiId(String(m.id));
-                          setSelectedBreakdownId("");
-                          setManifestasiMenuOpen(false);
-                        }}
-                        className={`w-full flex items-start gap-2 px-4 py-2.5 text-left font-label-md text-label-md transition-colors ${active ? "bg-primary-container text-on-primary-container" : "text-on-surface hover:bg-surface-container-low"}`}
-                      >
-                        <span className="whitespace-normal leading-snug">{m.poin}</span>
-                        {active && <Icon name="check" className="shrink-0 text-[16px] mt-0.5" />}
-                      </button>
+                      <div key={m.id} className="flex flex-col border-b border-outline-variant/20 last:border-0">
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={active}
+                          onClick={() => toggleManifestasi(m.id)}
+                          className={`w-full flex items-start gap-2.5 px-4 py-2.5 text-left font-label-md text-label-md transition-colors ${active ? "bg-primary-container/60 text-on-primary-container font-semibold" : "text-on-surface hover:bg-surface-container-low"}`}
+                        >
+                          <div className={`mt-0.5 shrink-0 w-4 h-4 rounded border flex items-center justify-center transition-colors ${active ? "bg-primary border-primary text-on-primary" : "border-outline bg-surface"}`}>
+                            {active && <Icon name="check" className="text-[12px]" />}
+                          </div>
+                          <span className="whitespace-normal leading-snug">{m.poin}</span>
+                        </button>
+
+                        {breakdowns.length > 0 && (
+                          <div className="flex flex-col py-1.5 pl-8 pr-3 bg-surface-container-lowest/60 border-t border-outline-variant/20 gap-1">
+                            <span className="text-[11px] font-label-sm text-outline font-semibold uppercase tracking-wider">
+                              Sub-Opsi Breakdown:
+                            </span>
+                            {breakdowns.map((b) => {
+                              const isSubSelected =
+                                active && selectedBreakdownId === String(b.id);
+                              return (
+                                <button
+                                  key={b.id}
+                                  type="button"
+                                  onClick={() => {
+                                    if (isSubSelected) {
+                                      setSelectedBreakdownId("");
+                                    } else {
+                                      setSelectedBreakdownId(String(b.id));
+                                      if (!selectedManifestasiIds.includes(m.id)) {
+                                        setSelectedManifestasiIds((curr) => [...curr, m.id]);
+                                      }
+                                    }
+                                  }}
+                                  className={`w-full flex items-start gap-2 px-3 py-2 text-left text-body-xs rounded-md transition-colors ${
+                                    isSubSelected
+                                      ? "bg-primary-container text-on-primary-container font-semibold"
+                                      : "text-on-surface-variant hover:bg-surface-container-low"
+                                  }`}
+                                >
+                                  <div
+                                    className={`mt-0.5 shrink-0 w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                                      isSubSelected
+                                        ? "border-primary bg-primary text-on-primary"
+                                        : "border-outline bg-surface"
+                                    }`}
+                                  >
+                                    {isSubSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                  </div>
+                                  <span className="whitespace-normal leading-snug">{b.label}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
               </>
             )}
           </div>
+
+          {selectedManifestasiIds.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              {selectedManifestasiIds.map((id) => {
+                const item = manifestasiOptions.find((m) => m.id === id);
+                if (!item) return null;
+                const breakdownItem = item.breakdowns.find(
+                  (b) => String(b.id) === selectedBreakdownId,
+                );
+                return (
+                  <span
+                    key={id}
+                    className="inline-flex items-start gap-1 px-2.5 py-1 rounded-md bg-primary-container/80 text-on-primary-container text-body-xs font-medium max-w-full"
+                  >
+                    <span className="line-clamp-2">
+                      {item.poin}
+                      {breakdownItem?.label ? ` — (${breakdownItem.label})` : ""}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleManifestasi(id)}
+                      className="shrink-0 mt-0.5 text-on-primary-container/70 hover:text-on-primary-container focus:outline-none"
+                      title="Hapus"
+                    >
+                      <Icon name="close" className="text-[14px]" />
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {breakdownOptions.length > 0 && (
-          <div className="flex flex-col gap-2">
-            <label className={labelClass} htmlFor="breakdown">
-              Breakdown
-            </label>
-            <input type="hidden" name="breakdown" value={selectedBreakdownId} />
-            <div className="relative">
-              <button
-                type="button"
-                id="breakdown"
-                aria-haspopup="listbox"
-                aria-expanded={breakdownMenuOpen}
-                onClick={() => setBreakdownMenuOpen((open) => !open)}
-                className={`${inputClass} flex items-center justify-between gap-2 text-left cursor-pointer`}
-              >
-                <span
-                  className={`truncate ${selectedBreakdownId ? "text-on-surface" : "text-outline"}`}
-                >
-                  {selectedBreakdownId
-                    ? breakdownOptions.find((b) => String(b.id) === selectedBreakdownId)?.label
-                    : "Pilih Breakdown"}
-                </span>
-                <Icon
-                  name="expand_more"
-                  className={`shrink-0 text-[20px] text-on-surface-variant transition-transform ${breakdownMenuOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {breakdownMenuOpen && (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Tutup menu breakdown"
-                    className="fixed inset-0 z-40 cursor-default"
-                    onClick={() => setBreakdownMenuOpen(false)}
-                  />
-                  <div
-                    role="listbox"
-                    className="absolute left-0 right-0 top-full mt-2 max-h-72 overflow-y-auto bg-surface rounded-lg shadow-lg border border-outline-variant/50 py-1 z-50 no-scrollbar"
-                  >
-                    {breakdownOptions.map((b) => {
-                      const active = String(b.id) === selectedBreakdownId;
-                      return (
-                        <button
-                          key={b.id}
-                          type="button"
-                          role="option"
-                          aria-selected={active}
-                          onClick={() => {
-                            setSelectedBreakdownId(String(b.id));
-                            setBreakdownMenuOpen(false);
-                          }}
-                          className={`w-full flex items-center justify-between gap-2 px-4 py-2.5 text-left font-label-md text-label-md transition-colors ${active ? "bg-primary-container text-on-primary-container" : "text-on-surface hover:bg-surface-container-low"}`}
-                        >
-                          {b.label}
-                          {active && <Icon name="check" className="text-[16px]" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {selectedManifestasiId && (
+        {selectedManifestasiIds.length > 0 && (
           <button
             type="button"
             className="self-start inline-flex items-center gap-2 text-primary font-label-md text-label-md hover:underline"
             onClick={() => setShowManifestasiModal(true)}
           >
             <Icon name="info" className="text-[18px]" />
-            Lihat Detail Manifestasi
+            Lihat Detail Manifestasi {selectedManifestasiIds.length > 1 ? `(${selectedManifestasiIds.length})` : ""}
           </button>
         )}
       </section>
@@ -1071,6 +1088,7 @@ export function ActionItemForm({
 
       {showManifestasiModal && (
         <ManifestasiDetailModal
+          manifestasiIds={selectedManifestasiIds}
           manifestasiId={selectedManifestasiId ? Number(selectedManifestasiId) : null}
           breakdownId={selectedBreakdownId ? Number(selectedBreakdownId) : null}
           onClose={() => setShowManifestasiModal(false)}

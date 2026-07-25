@@ -73,6 +73,7 @@ export function ActionDetail({
   initialContributions = [],
   creatorOverride,
   manifestasi,
+  manifestasis,
   voters = [],
 }: {
   item: ActionItem;
@@ -98,6 +99,14 @@ export function ActionDetail({
     dalil: string;
     contoh: string;
   } | null;
+  manifestasis?: {
+    id: number;
+    poin: string;
+    label: string | null;
+    keterangan: string;
+    dalil: string;
+    contoh: string;
+  }[];
   voters?: Participant[];
 }) {
   const router = useRouter();
@@ -241,24 +250,39 @@ export function ActionDetail({
             </h1>
           </section>
 
-          {manifestasi && (
-            <section className="glass-card rounded-xl p-4 flex items-start justify-between gap-3 border-l-4 border-l-tertiary">
-              <div className="flex flex-col gap-1">
+          {((manifestasis && manifestasis.length > 0) || manifestasi) && (
+            <section className="glass-card rounded-xl p-4 flex flex-col gap-3 border-l-4 border-l-tertiary">
+              <div className="flex items-center justify-between gap-2">
                 <span className="font-label-sm text-label-sm text-primary uppercase tracking-wide">
-                  Manifestasi Iwa&apos;
+                  Manifestasi Iwa&apos; ({manifestasis && manifestasis.length > 0 ? manifestasis.length : 1})
                 </span>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface">
-                  {manifestasi.poin}
-                </h2>
+                <button
+                  type="button"
+                  onClick={() => setShowManifestasiModal(true)}
+                  className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm hover:bg-tertiary-container/80 transition-colors"
+                >
+                  <Icon name="open_in_new" className="text-[14px]" />
+                  Selengkapnya
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowManifestasiModal(true)}
-                className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm hover:bg-tertiary-container/80 transition-colors"
-              >
-                <Icon name="open_in_new" className="text-[14px]" />
-                Selengkapnya
-              </button>
+              <div className="flex flex-col gap-2">
+                {manifestasis && manifestasis.length > 0 ? (
+                  manifestasis.map((m, idx) => (
+                    <div key={m.id || idx} className="flex items-start gap-2">
+                      <span className="shrink-0 w-5 h-5 rounded-full bg-tertiary/10 text-tertiary font-label-xs text-label-xs flex items-center justify-center font-bold mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <h2 className="font-headline-sm text-headline-sm text-on-surface">
+                        {m.poin}
+                      </h2>
+                    </div>
+                  ))
+                ) : manifestasi ? (
+                  <h2 className="font-headline-sm text-headline-sm text-on-surface">
+                    {manifestasi.poin}
+                  </h2>
+                ) : null}
+              </div>
             </section>
           )}
 
@@ -641,6 +665,7 @@ export function ActionDetail({
 
       {showManifestasiModal && (
         <ManifestasiDetailModal
+          manifestasiIds={item.manifestasiIds}
           manifestasiId={item.manifestasiId ?? null}
           breakdownId={item.breakdownId}
           onClose={() => setShowManifestasiModal(false)}

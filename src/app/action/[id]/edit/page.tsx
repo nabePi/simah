@@ -72,6 +72,7 @@ export default async function EditActionPage({
           hasEndDate: Boolean(action.endDate),
           endDate: action.endDate ?? undefined,
           manifestasiId: action.manifestasiId ?? undefined,
+          manifestasiIds: action.manifestasiIds && action.manifestasiIds.length > 0 ? action.manifestasiIds : (action.manifestasiId ? [action.manifestasiId] : undefined),
           breakdownId: action.breakdownId ?? undefined,
         }}
         manifestasiOptions={manifestasiOptions}

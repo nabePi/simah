@@ -106,6 +106,7 @@ export const actions = pgTable("actions", {
   skills: text("skills").array().default([]),
   isPublished: boolean("is_published").default(false).notNull(),
   manifestasiId: integer("manifestasi_id").references(() => manifestasiIwa.id),
+  manifestasiIds: integer("manifestasi_ids").array().default([]),
   breakdownId: integer("breakdown_id").references(
     () => manifestasiBreakdowns.id,
   ),

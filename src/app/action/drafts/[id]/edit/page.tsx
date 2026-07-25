@@ -68,6 +68,7 @@ export default async function EditDraftActionPage({
           hasEndDate: Boolean(draft.endDate),
           endDate: draft.endDate ?? undefined,
           manifestasiId: draft.manifestasiId ?? undefined,
+          manifestasiIds: draft.manifestasiIds && draft.manifestasiIds.length > 0 ? draft.manifestasiIds : (draft.manifestasiId ? [draft.manifestasiId] : undefined),
           breakdownId: draft.breakdownId ?? undefined,
         }}
         manifestasiOptions={manifestasiOptions}
