@@ -81,7 +81,7 @@ export function DraftActionItemCard({ item }: { item: DraftItem }) {
             <Icon name="description" className="text-[14px]" />
             Latar Belakang
           </p>
-          <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-0.5">
+          <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-0.5 whitespace-pre-line">
             {item.background}
           </p>
         </div>
@@ -90,7 +90,7 @@ export function DraftActionItemCard({ item }: { item: DraftItem }) {
             <Icon name="flag" className="text-[14px]" />
             Tujuan / Output
           </p>
-          <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-0.5">
+          <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-0.5 whitespace-pre-line">
             {item.objectives}
           </p>
         </div>
