@@ -1,0 +1,57 @@
+# Changelog
+
+## [0.2.0](https://github.com/nabePi/simah/compare/v0.1.0...v0.2.0) (2026-07-30)
+
+
+### Features
+
+* **action:** add multi-select interacting sectors to action items ([bf778e7](https://github.com/nabePi/simah/commit/bf778e741194bfe77ee6fdb4fd9d86a22f282af2))
+* **action:** add share CTA on detail page header ([c0ca8bd](https://github.com/nabePi/simah/commit/c0ca8bd2bfbdb3e21f690fde74f165e4dfe6c1c5))
+* **action:** default sort by most votes on action page ([9e63bd9](https://github.com/nabePi/simah/commit/9e63bd98529ac6ae16067aec7f2c49c6883a76ba))
+* **action:** let creators edit their published action ([fc49bca](https://github.com/nabePi/simah/commit/fc49bcaf6d43f3c45d2e82523c7d853f0734706f))
+* **action:** make vote button more prominent on action cards ([b02870a](https://github.com/nabePi/simah/commit/b02870aa695c9ad4db1a439c14daa3afff99c9c4))
+* **action:** notify creator when another user votes their action ([ce1d74f](https://github.com/nabePi/simah/commit/ce1d74fd873aec193c1e6f3cb9dac12387640198))
+* **action:** require title, background, and objectives before saving ([f218ec5](https://github.com/nabePi/simah/commit/f218ec5d14c3082f87df86a9933494d5426cfd5c))
+* **action:** show voters section on action detail page ([a4ca5bc](https://github.com/nabePi/simah/commit/a4ca5bce59c3cd9225f0ceab5a4cb9ba0eba9e12))
+* **action:** translate status labels to Indonesian and equalize button height ([5dc6d47](https://github.com/nabePi/simah/commit/5dc6d47ba716d57b962a95cc056483548dcf2ae6))
+* add initial database migration ([2cdbfed](https://github.com/nabePi/simah/commit/2cdbfed047ce1be192bd6fde7a5e94a8be4d2531))
+* add Simah application source code ([cf8f3c5](https://github.com/nabePi/simah/commit/cf8f3c5a068d9e0c52efabcb3217fb84d0f8ec17))
+* **admin:** add manual user creation with default password ([d903ed0](https://github.com/nabePi/simah/commit/d903ed070a037f4fa6316654163aac1304ec6a3a))
+* **admin:** add reset password action for users ([c8c61f7](https://github.com/nabePi/simah/commit/c8c61f788654707656a73722e8314c2f96f3aad4))
+* **admin:** clarify action status card labels on overview ([5d0e698](https://github.com/nabePi/simah/commit/5d0e6987dc7f9094d7cdaef4e8b49d01638641e4))
+* **admin:** dedup broadcast history to one entry and replace alert with success popup ([72f2e91](https://github.com/nabePi/simah/commit/72f2e9153948f548b6303c3799bc11abcd7fc9bc))
+* **admin:** improve navigation, headers, and auth flow ([7b70fa1](https://github.com/nabePi/simah/commit/7b70fa1ab6ade55a92e4181aaa647d247d3225a1))
+* **admin:** improve user import with duplicate detection and summary popup ([9879319](https://github.com/nabePi/simah/commit/9879319a29f8f683727b3633ad9b454eff17d6e6))
+* **admin:** redirect /admin to /admin/login ([3a42d91](https://github.com/nabePi/simah/commit/3a42d91794029cd04a5c13d28638c50a7d760290))
+* **admin:** sort users by name ascending on dashboard ([c1b2387](https://github.com/nabePi/simah/commit/c1b238707393524a5a2a3ca9385a1b7f647e4b11))
+* **auth:** parallel admin and user sessions via dual cookies ([a7fa0ac](https://github.com/nabePi/simah/commit/a7fa0ac3cea0bd32e088b730bb90c9e18ceea00a))
+* **directory:** add "koneksi saya" and "koneksi pending" filters ([e6463e6](https://github.com/nabePi/simah/commit/e6463e623f9c063e9c4567b98b6c979a54504d18))
+* **directory:** allow sharing WhatsApp number with connected participants ([8aad42a](https://github.com/nabePi/simah/commit/8aad42abf65d40e5028bce78bf6733f741985c55))
+* **directory:** sort participant cards by name ascending ([b3c5254](https://github.com/nabePi/simah/commit/b3c52544c6a967f441949e4a79dc555f59a4d7c2))
+* **home:** add PWA install banner and web manifest ([bec7125](https://github.com/nabePi/simah/commit/bec71258a535d430bb9c3ae95ce8298b24635eef))
+* **home:** link action stats to filtered action page ([659451f](https://github.com/nabePi/simah/commit/659451f27914f440e8acc2b5196a0320f1433db9))
+* **home:** link connection cards to directory with "koneksi saya" filter ([957fced](https://github.com/nabePi/simah/commit/957fced52876f77ca68e6544c4cc8e83a890e112))
+* **notifications:** live-update bell with unread count polling and app badge ([bec04d2](https://github.com/nabePi/simah/commit/bec04d2fa1799b93c85f6f4875ca12cd352777fa))
+* **password:** show success popup and prompt re-login after password change ([cb21c01](https://github.com/nabePi/simah/commit/cb21c012b56c7dea78952df097451df499b61018))
+* **profile:** add completeness banner on participant pages ([02e6082](https://github.com/nabePi/simah/commit/02e60820b0f90935510a4fd67459614531851e85))
+* **profile:** add directory-card preview and unify status labels ([d2f4e77](https://github.com/nabePi/simah/commit/d2f4e77d2b854425977889d5c32e1b518ff643da))
+
+
+### Bug Fixes
+
+* **action:** close gap between sticky submit buttons and mobile navbar ([eed534b](https://github.com/nabePi/simah/commit/eed534b206a8bc2e8dcf71d2e78e87b94c26532a))
+* **action:** show full user info in action page popups like directory ([4d07ebe](https://github.com/nabePi/simah/commit/4d07ebeb0e8e071ec151b24112046c1fbba53bd0))
+* **admin:** filter notification history to broadcast type only ([aa7cb33](https://github.com/nabePi/simah/commit/aa7cb3347a540c918019e9ed6f1c10474b7d684d))
+* **admin:** leave role empty when creating users so they fill it in profile ([97ece1c](https://github.com/nabePi/simah/commit/97ece1c8c4c54f90584476933d79d4c7b89d786a))
+* **admin:** remove gap between sticky action bar and bottom nav on mobile ([6597171](https://github.com/nabePi/simah/commit/6597171a4dc26e2a2f22e64fefb5964532cf3e0f))
+* avoid host port conflict by exposing container port only ([f151719](https://github.com/nabePi/simah/commit/f151719beb3682c53775d076481d64c99dac4211))
+* **directory:** combine connection filters with OR instead of AND ([376c43b](https://github.com/nabePi/simah/commit/376c43b3ad4060231965e343ca2a4c7fe592b1ff))
+* **docker-compose:** remove hardcoded container_name for multi-env support ([db01e18](https://github.com/nabePi/simah/commit/db01e18b0ac222489d2fe608013bfd99addefeab))
+* join dokploy-network to reach database service ([a783a36](https://github.com/nabePi/simah/commit/a783a360e6da9558069574e075927c256057aed2))
+* mark data-fetching pages as dynamic for Docker build ([1881a3c](https://github.com/nabePi/simah/commit/1881a3cf08dee7c8fac5b14b8315e19e9f899f2f))
+* **middleware:** allow admin on admin routes to prevent redirect loop ([c5630f8](https://github.com/nabePi/simah/commit/c5630f81267b1dfeda96d7a6211687c13c636534))
+* **middleware:** redirect admin away from participant pages to prevent NaN user id query ([6dfb206](https://github.com/nabePi/simah/commit/6dfb206725c4f85365eaedee1acf64a25fdac548))
+* **notifications:** refetch unread count on tab focus/visibility change ([0cdc8c4](https://github.com/nabePi/simah/commit/0cdc8c47a5525f7d42fff068f76c75d5fb8eb6df))
+* **notifications:** show full actor info in user popup like elsewhere ([8857bd2](https://github.com/nabePi/simah/commit/8857bd26acc9991174e9d9355ac52f9b1cdc9b1f))
+* **notifications:** stop photo click from also opening the notification popup ([cbd1174](https://github.com/nabePi/simah/commit/cbd11740fec3e64ffe2a53b98b3b266f89e9c66b))
+* **profile:** compress avatar client-side to avoid 1MB server action limit ([d6a3b80](https://github.com/nabePi/simah/commit/d6a3b805874e5ce95ca9653f7593a877dc45f81d))
