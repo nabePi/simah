@@ -329,7 +329,7 @@ export function ActionDetail({
                   <Icon name="description" className="text-[16px]" />
                   Latar Belakang
                 </p>
-                <p className="font-body-md text-body-md text-on-surface whitespace-pre-line">
+                <p className="font-body-md text-body-md text-on-surface">
                   {item.background}
                 </p>
               </div>
@@ -340,7 +340,7 @@ export function ActionDetail({
                   <Icon name="flag" className="text-[16px]" />
                   Tujuan / Output
                 </p>
-                <p className="font-body-md text-body-md text-on-surface whitespace-pre-line">
+                <p className="font-body-md text-body-md text-on-surface">
                   {item.objectives}
                 </p>
               </div>
@@ -351,7 +351,7 @@ export function ActionDetail({
                   <Icon name="volunteer_activism" className="text-[16px]" />
                   Penerima Manfaat
                 </p>
-                <p className="font-body-md text-body-md text-on-surface whitespace-pre-line">
+                <p className="font-body-md text-body-md text-on-surface">
                   {item.beneficiary}
                 </p>
               </div>
@@ -361,7 +361,7 @@ export function ActionDetail({
                 <Icon name="short_text" className="text-[16px]" />
                 Deskripsi Singkat
               </p>
-              <p className="font-body-md text-body-md text-on-surface whitespace-pre-line">
+              <p className="font-body-md text-body-md text-on-surface">
                 {item.description}
               </p>
             </div>
