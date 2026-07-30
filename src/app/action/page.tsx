@@ -55,6 +55,12 @@ export default async function ActionPage() {
       needsFunding: a.needsFunding ?? undefined,
       isPic: a.isPic ?? undefined,
       skills: a.skills ?? [],
+      manifestasiIds:
+        a.manifestasiIds && a.manifestasiIds.length > 0
+          ? a.manifestasiIds
+          : a.manifestasiId
+            ? [a.manifestasiId]
+            : [],
       manifestasiPoin: row.manifestasiPoin ?? undefined,
       creator: row.creatorName
         ? {

@@ -21,7 +21,7 @@ export type ActionItem = {
   skills?: string[];
   creator?: Participant;
   manifestasiId?: number;
-  manifestasiIds?: number[];
+  manifestasiIds: number[];
   breakdownId?: number;
   manifestasiPoin?: string;
   contributorNames?: string[];

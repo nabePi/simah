@@ -549,16 +549,14 @@ export async function fetchManifestasiDetailsMultiple(
   contoh: string;
 }[]> {
   if (!manifestasiIds || manifestasiIds.length === 0) return [];
-  const results = [];
-  for (const id of manifestasiIds) {
-    const detail = await fetchManifestasiDetail(id, breakdownId);
-    if (detail) {
-      results.push({ id, ...detail });
-    }
-  }
-  return results;
+  const results = await Promise.all(
+    manifestasiIds.map(async (id) => {
+      const detail = await fetchManifestasiDetail(id, breakdownId);
+      return detail ? { id, ...detail } : null;
+    }),
+  );
+  return results.filter((r): r is NonNullable<typeof r> => r !== null);
 }
-
 
 export async function fetchUnreadNotificationCount(
   userId: number,

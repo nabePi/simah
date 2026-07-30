@@ -103,21 +103,28 @@ export function ActionItemForm({
   );
   const selectedManifestasiId = selectedManifestasiIds[0] ? String(selectedManifestasiIds[0]) : "";
 
+  const [selectedBreakdownId, setSelectedBreakdownId] = useState(
+    initialValues?.breakdownId ? String(initialValues.breakdownId) : "",
+  );
+  const selectedBreakdownOwnerId =
+    selectedBreakdownId && manifestasiOptions
+      ? manifestasiOptions.find((m) =>
+          m.breakdowns.some((b) => String(b.id) === selectedBreakdownId),
+        )?.id ?? null
+      : null;
+
   function toggleManifestasi(id: number) {
     setSelectedManifestasiIds((current) => {
-      const next = current.includes(id)
+      const isRemoving = current.includes(id);
+      const next = isRemoving
         ? current.filter((item) => item !== id)
         : [...current, id];
-      if (next.length === 0) {
+      if (next.length === 0 || (isRemoving && selectedBreakdownOwnerId === id)) {
         setSelectedBreakdownId("");
       }
       return next;
     });
   }
-
-  const [selectedBreakdownId, setSelectedBreakdownId] = useState(
-    initialValues?.breakdownId ? String(initialValues.breakdownId) : "",
-  );
   const [showManifestasiModal, setShowManifestasiModal] = useState(false);
   const [manifestasiMenuOpen, setManifestasiMenuOpen] = useState(false);
   const skillInputRef = useRef<HTMLInputElement>(null);
@@ -400,7 +407,7 @@ export function ActionItemForm({
 
         <div className="flex flex-col gap-2">
           <label className={labelClass} htmlFor="manifestasi">
-            Manifestasi Iwa' (Pilih Bebas)
+            Manifestasi Iwa&apos; (boleh pilih lebih dari satu)
           </label>
           <input type="hidden" name="manifestasi" value={selectedManifestasiIds.join(",")} />
           <div className="relative">
@@ -453,6 +460,8 @@ export function ActionItemForm({
                   {manifestasiOptions.map((m) => {
                     const active = selectedManifestasiIds.includes(m.id);
                     const breakdowns = (m.breakdowns ?? []).filter((b) => b.label !== null);
+                    const breakdownLockedElsewhere =
+                      selectedBreakdownOwnerId !== null && selectedBreakdownOwnerId !== m.id;
                     return (
                       <div key={m.id} className="flex flex-col border-b border-outline-variant/20 last:border-0">
                         <button
@@ -473,6 +482,11 @@ export function ActionItemForm({
                             <span className="text-[11px] font-label-sm text-outline font-semibold uppercase tracking-wider">
                               Sub-Opsi Breakdown:
                             </span>
+                            {breakdownLockedElsewhere && (
+                              <span className="text-[11px] text-outline italic">
+                                Breakdown sudah dipilih di Manifestasi lain. Kosongkan dulu untuk memilih di sini.
+                              </span>
+                            )}
                             {breakdowns.map((b) => {
                               const isSubSelected =
                                 active && selectedBreakdownId === String(b.id);
@@ -480,6 +494,12 @@ export function ActionItemForm({
                                 <button
                                   key={b.id}
                                   type="button"
+                                  disabled={breakdownLockedElsewhere}
+                                  title={
+                                    breakdownLockedElsewhere
+                                      ? "Hanya bisa memilih satu breakdown pada satu waktu"
+                                      : undefined
+                                  }
                                   onClick={() => {
                                     if (isSubSelected) {
                                       setSelectedBreakdownId("");
@@ -493,7 +513,9 @@ export function ActionItemForm({
                                   className={`w-full flex items-start gap-2 px-3 py-2 text-left text-body-xs rounded-md transition-colors ${
                                     isSubSelected
                                       ? "bg-primary-container text-on-primary-container font-semibold"
-                                      : "text-on-surface-variant hover:bg-surface-container-low"
+                                      : breakdownLockedElsewhere
+                                        ? "text-outline/60 cursor-not-allowed opacity-60"
+                                        : "text-on-surface-variant hover:bg-surface-container-low"
                                   }`}
                                 >
                                   <div

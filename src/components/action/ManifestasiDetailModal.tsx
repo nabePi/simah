@@ -58,7 +58,7 @@ export function ManifestasiDetailModal({
       .finally(() => setLoading(false));
 
     return () => window.removeEventListener("keydown", handleKey);
-  }, [targetIds.join(","), breakdownId, onClose]);
+  }, [JSON.stringify(targetIds), breakdownId, onClose]);
 
   if (targetIds.length === 0) return null;
 
@@ -160,4 +160,3 @@ export function ManifestasiDetailModal({
     </div>
   );
 }
-
