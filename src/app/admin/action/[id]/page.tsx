@@ -7,7 +7,7 @@ import { ActionDetail } from "@/components/action/ActionDetail";
 import {
   fetchActionById,
   fetchContributionsForAction,
-  fetchManifestasiDetail,
+  fetchManifestasiDetailsMultiple,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -38,9 +38,12 @@ export default async function AdminActionDetailPage({
   if (!actionRow) {
     notFound();
   }
-  const manifestasiDetail = actionRow.manifestasiId
-    ? await fetchManifestasiDetail(actionRow.manifestasiId, actionRow.breakdownId)
-    : null;
+  const manifestasiDetails = actionRow.manifestasiIds && actionRow.manifestasiIds.length > 0
+    ? await fetchManifestasiDetailsMultiple(actionRow.manifestasiIds, actionRow.breakdownId)
+    : actionRow.manifestasiId
+      ? await fetchManifestasiDetailsMultiple([actionRow.manifestasiId], actionRow.breakdownId)
+      : [];
+  const manifestasiDetail = manifestasiDetails[0] ?? null;
   const contributionRows = await fetchContributionsForAction(Number(id));
   const initialContributions = contributionRows.map((c) => ({
     participantId: String(c.participantId),
@@ -94,6 +97,7 @@ export default async function AdminActionDetailPage({
     isPic: actionRow.isPic ?? undefined,
     skills: actionRow.skills,
     manifestasiId: actionRow.manifestasiId ?? undefined,
+    manifestasiIds: actionRow.manifestasiIds,
     breakdownId: actionRow.breakdownId ?? undefined,
   };
   return (
@@ -107,6 +111,7 @@ export default async function AdminActionDetailPage({
           creatorOverride={creatorOverride}
           initialContributions={initialContributions}
           manifestasi={manifestasiDetail}
+          manifestasis={manifestasiDetails}
         />
       </main>
       <AdminBottomNavBar />

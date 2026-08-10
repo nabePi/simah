@@ -166,10 +166,16 @@ export async function createDraft(input: {
   hasEndDate?: boolean;
   endDate?: string;
   manifestasiId?: number;
+  manifestasiIds?: number[];
   breakdownId?: number;
 }): Promise<{ id?: number; error?: string }> {
   const { userId } = await requireUser();
   if (!input.title.trim()) return { error: "Judul wajib diisi." };
+
+  const ids = input.manifestasiIds && input.manifestasiIds.length > 0
+    ? input.manifestasiIds
+    : input.manifestasiId ? [input.manifestasiId] : [];
+
   const [created] = await db
     .insert(actions)
     .values({
@@ -184,7 +190,8 @@ export async function createDraft(input: {
       interactingSectors: input.interactingSectors,
       createdById: userId,
       isPublished: false,
-      manifestasiId: input.manifestasiId ?? null,
+      manifestasiId: ids[0] ?? input.manifestasiId ?? null,
+      manifestasiIds: ids,
       breakdownId: input.breakdownId ?? null,
       startDate:
         input.hasDeadline && input.startDate
@@ -226,6 +233,7 @@ export async function updateDraft(
     hasEndDate?: boolean;
     endDate?: string;
     manifestasiId?: number;
+    manifestasiIds?: number[];
     breakdownId?: number;
   },
 ): Promise<{ id?: number; error?: string }> {
@@ -240,6 +248,10 @@ export async function updateDraft(
   if (row.createdById !== userId) return { error: "Tidak diizinkan." };
   if (row.isPublished) return { error: "Action yang sudah dipublish tidak dapat diedit di sini." };
 
+  const ids = input.manifestasiIds && input.manifestasiIds.length > 0
+    ? input.manifestasiIds
+    : input.manifestasiId ? [input.manifestasiId] : [];
+
   await db
     .update(actions)
     .set({
@@ -253,7 +265,8 @@ export async function updateDraft(
       isPic: input.isPic,
       skills: input.skills,
       interactingSectors: input.interactingSectors,
-      manifestasiId: input.manifestasiId ?? null,
+      manifestasiId: ids[0] ?? input.manifestasiId ?? null,
+      manifestasiIds: ids,
       breakdownId: input.breakdownId ?? null,
       startDate:
         input.hasDeadline && input.startDate
@@ -321,6 +334,7 @@ export async function updateOwnAction(
     hasEndDate?: boolean;
     endDate?: string;
     manifestasiId?: number;
+    manifestasiIds?: number[];
     breakdownId?: number;
   },
 ): Promise<{ id?: number; error?: string }> {
@@ -335,6 +349,10 @@ export async function updateOwnAction(
   if (row.createdById !== userId) return { error: "Tidak diizinkan." };
   if (!row.isPublished) return { error: "Action belum dipublish." };
 
+  const ids = input.manifestasiIds && input.manifestasiIds.length > 0
+    ? input.manifestasiIds
+    : input.manifestasiId ? [input.manifestasiId] : [];
+
   await db
     .update(actions)
     .set({
@@ -348,7 +366,8 @@ export async function updateOwnAction(
       isPic: input.isPic,
       skills: input.skills,
       interactingSectors: input.interactingSectors,
-      manifestasiId: input.manifestasiId ?? null,
+      manifestasiId: ids[0] ?? input.manifestasiId ?? null,
+      manifestasiIds: ids,
       breakdownId: input.breakdownId ?? null,
       startDate:
         input.hasDeadline && input.startDate
