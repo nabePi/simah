@@ -58,6 +58,7 @@ export default async function AdminActionEditPage({
     isPic: actionRow.isPic ?? undefined,
     skills: actionRow.skills,
     manifestasiId: actionRow.manifestasiId ?? undefined,
+    manifestasiIds: actionRow.manifestasiIds,
     breakdownId: actionRow.breakdownId ?? undefined,
   };
   return (

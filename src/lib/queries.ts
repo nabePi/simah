@@ -32,6 +32,7 @@ export type ActionDetail = {
   skills: string[];
   isPublished: boolean;
   manifestasiId: number | null;
+  manifestasiIds: number[];
   breakdownId: number | null;
   creator: {
     id: number;
@@ -67,6 +68,11 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
         .limit(1)
     : [];
   const creator = creatorRow[0] ?? null;
+
+  const rawIds = row.manifestasiIds && row.manifestasiIds.length > 0
+    ? row.manifestasiIds
+    : row.manifestasiId ? [row.manifestasiId] : [];
+
   return {
     id: row.id,
     title: row.title,
@@ -92,6 +98,7 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
     skills: row.skills ?? [],
     isPublished: row.isPublished,
     manifestasiId: row.manifestasiId,
+    manifestasiIds: rawIds,
     breakdownId: row.breakdownId,
       creator: creator
       ? {
@@ -492,24 +499,30 @@ export async function fetchManifestasiDetail(
     .limit(1);
   if (!manifestasi) return null;
 
-  const [breakdown] = breakdownId
+  const breakdownColumns = {
+    label: manifestasiBreakdowns.label,
+    keterangan: manifestasiBreakdowns.keterangan,
+    dalil: manifestasiBreakdowns.dalil,
+    contoh: manifestasiBreakdowns.contoh,
+  };
+
+  const [ownedBreakdown] = breakdownId
     ? await db
-        .select({
-          label: manifestasiBreakdowns.label,
-          keterangan: manifestasiBreakdowns.keterangan,
-          dalil: manifestasiBreakdowns.dalil,
-          contoh: manifestasiBreakdowns.contoh,
-        })
+        .select(breakdownColumns)
         .from(manifestasiBreakdowns)
-        .where(eq(manifestasiBreakdowns.id, breakdownId))
+        .where(
+          and(
+            eq(manifestasiBreakdowns.id, breakdownId),
+            eq(manifestasiBreakdowns.manifestasiId, manifestasiId),
+          ),
+        )
         .limit(1)
+    : [];
+
+  const [breakdown] = ownedBreakdown
+    ? [ownedBreakdown]
     : await db
-        .select({
-          label: manifestasiBreakdowns.label,
-          keterangan: manifestasiBreakdowns.keterangan,
-          dalil: manifestasiBreakdowns.dalil,
-          contoh: manifestasiBreakdowns.contoh,
-        })
+        .select(breakdownColumns)
         .from(manifestasiBreakdowns)
         .where(eq(manifestasiBreakdowns.manifestasiId, manifestasiId))
         .limit(1);
@@ -522,6 +535,27 @@ export async function fetchManifestasiDetail(
     dalil: breakdown.dalil,
     contoh: breakdown.contoh,
   };
+}
+
+export async function fetchManifestasiDetailsMultiple(
+  manifestasiIds: number[],
+  breakdownId?: number | null,
+): Promise<{
+  id: number;
+  poin: string;
+  label: string | null;
+  keterangan: string;
+  dalil: string;
+  contoh: string;
+}[]> {
+  if (!manifestasiIds || manifestasiIds.length === 0) return [];
+  const results = await Promise.all(
+    manifestasiIds.map(async (id) => {
+      const detail = await fetchManifestasiDetail(id, breakdownId);
+      return detail ? { id, ...detail } : null;
+    }),
+  );
+  return results.filter((r): r is NonNullable<typeof r> => r !== null);
 }
 
 export async function fetchUnreadNotificationCount(

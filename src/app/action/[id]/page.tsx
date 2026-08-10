@@ -6,7 +6,7 @@ import { ActionDetail } from "@/components/action/ActionDetail";
 import {
   fetchActionById,
   fetchContributionsForAction,
-  fetchManifestasiDetail,
+  fetchManifestasiDetailsMultiple,
   fetchVotersForAction,
 } from "@/lib/queries";
 import { auth } from "@/auth/config";
@@ -39,9 +39,12 @@ export default async function ActionDetailPage({
   if (!actionRow) {
     notFound();
   }
-  const manifestasiDetail = actionRow.manifestasiId
-    ? await fetchManifestasiDetail(actionRow.manifestasiId, actionRow.breakdownId)
-    : null;
+  const manifestasiDetails = actionRow.manifestasiIds && actionRow.manifestasiIds.length > 0
+    ? await fetchManifestasiDetailsMultiple(actionRow.manifestasiIds, actionRow.breakdownId)
+    : actionRow.manifestasiId
+      ? await fetchManifestasiDetailsMultiple([actionRow.manifestasiId], actionRow.breakdownId)
+      : [];
+  const manifestasiDetail = manifestasiDetails[0] ?? null;
 
   const contributionRows = await fetchContributionsForAction(Number(id));
   const voterRows = await fetchVotersForAction(Number(id));
@@ -111,6 +114,7 @@ export default async function ActionDetailPage({
     isPic: actionRow.isPic ?? undefined,
     skills: actionRow.skills,
     manifestasiId: actionRow.manifestasiId ?? undefined,
+    manifestasiIds: actionRow.manifestasiIds,
     breakdownId: actionRow.breakdownId ?? undefined,
   };
 
@@ -128,6 +132,7 @@ export default async function ActionDetailPage({
         initialContributions={initialContributions}
         creatorOverride={creatorOverride}
         manifestasi={manifestasiDetail}
+        manifestasis={manifestasiDetails}
         voters={voters}
       />
       <BottomNavBar />

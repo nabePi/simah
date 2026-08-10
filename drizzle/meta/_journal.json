@@ -50,6 +50,13 @@
       "when": 1784625464775,
       "tag": "0006_fuzzy_jubilee",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785392512182,
+      "tag": "0007_aromatic_master_mold",
+      "breakpoints": true
     }
   ]
 }
