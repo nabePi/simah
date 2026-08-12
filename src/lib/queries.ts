@@ -77,7 +77,6 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
   const rawBreakdownIds = row.breakdownIds && row.breakdownIds.length > 0
     ? row.breakdownIds
     : row.breakdownId ? [row.breakdownId] : [];
-
   return {
     id: row.id,
     title: row.title,

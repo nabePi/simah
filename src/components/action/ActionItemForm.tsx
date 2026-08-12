@@ -128,6 +128,7 @@ export function ActionItemForm({
     });
   }
 
+
   function toggleBreakdown(bId: number, mId: number) {
     setSelectedBreakdownIds((current) => {
       const isRemoving = current.includes(bId);
@@ -473,6 +474,7 @@ export function ActionItemForm({
                   {manifestasiOptions.map((m) => {
                     const active = selectedManifestasiIds.includes(m.id);
                     const breakdowns = (m.breakdowns ?? []).filter((b) => b.label !== null);
+
                     return (
                       <div key={m.id} className="flex flex-col border-b border-outline-variant/20 last:border-0">
                         <button

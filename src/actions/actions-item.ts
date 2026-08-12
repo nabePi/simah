@@ -180,7 +180,6 @@ export async function createDraft(input: {
   const bIds = input.breakdownIds && input.breakdownIds.length > 0
     ? input.breakdownIds
     : input.breakdownId ? [input.breakdownId] : [];
-
   const [created] = await db
     .insert(actions)
     .values({
@@ -271,7 +270,6 @@ export async function updateDraft(
   const bIds = input.breakdownIds && input.breakdownIds.length > 0
     ? input.breakdownIds
     : input.breakdownId ? [input.breakdownId] : [];
-
   await db
     .update(actions)
     .set({
@@ -378,7 +376,6 @@ export async function updateOwnAction(
   const bIds = input.breakdownIds && input.breakdownIds.length > 0
     ? input.breakdownIds
     : input.breakdownId ? [input.breakdownId] : [];
-
   await db
     .update(actions)
     .set({

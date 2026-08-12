@@ -31,8 +31,6 @@ export function ManifestasiDetailModal({
 }: ManifestasiDetailModalProps) {
   const [details, setDetails] = useState<ManifestasiDetail[]>([]);
   const [activeTab, setActiveTab] = useState(0);
-  const [loading, setLoading] = useState(false);
-
   const targetIds =
     manifestasiIds && manifestasiIds.length > 0
       ? manifestasiIds
@@ -47,13 +45,17 @@ export function ManifestasiDetailModal({
         ? [breakdownId]
         : [];
 
+  const targetIdsKey = targetIds.join(",");
+  const targetBreakdownIdsKey = targetBreakdownIds.join(",");
+  const [loading, setLoading] = useState(targetIds.length > 0);
+
   useEffect(() => {
     if (targetIds.length === 0) return;
     function handleKey(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
     }
     window.addEventListener("keydown", handleKey);
-    setLoading(true);
+    let isCancelled = false;
 
     fetchManifestasiDetailsMultipleAction(
       targetIds,
@@ -61,12 +63,17 @@ export function ManifestasiDetailModal({
       targetBreakdownIds,
     )
       .then((res) => {
-        setDetails(res);
+        if (!isCancelled) setDetails(res);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!isCancelled) setLoading(false);
+      });
 
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [JSON.stringify(targetIds), JSON.stringify(targetBreakdownIds), onClose]);
+    return () => {
+      isCancelled = true;
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [targetIdsKey, targetBreakdownIdsKey, onClose]);
 
   if (targetIds.length === 0) return null;
 
