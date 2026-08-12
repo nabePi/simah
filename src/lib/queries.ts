@@ -9,7 +9,7 @@ import {
   manifestasiIwa,
   manifestasiBreakdowns,
 } from "@/db/schema";
-import { eq, and, or, ne, sql } from "drizzle-orm";
+import { eq, and, or, ne, sql, inArray } from "drizzle-orm";
 import type { Action } from "@/db/schema";
 import { avatarUrlToSrc } from "@/lib/avatar";
 
@@ -34,6 +34,7 @@ export type ActionDetail = {
   manifestasiId: number | null;
   manifestasiIds: number[];
   breakdownId: number | null;
+  breakdownIds: number[];
   creator: {
     id: number;
     name: string;
@@ -73,6 +74,10 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
     ? row.manifestasiIds
     : row.manifestasiId ? [row.manifestasiId] : [];
 
+  const rawBreakdownIds = row.breakdownIds && row.breakdownIds.length > 0
+    ? row.breakdownIds
+    : row.breakdownId ? [row.breakdownId] : [];
+
   return {
     id: row.id,
     title: row.title,
@@ -100,7 +105,8 @@ export async function fetchActionById(id: number): Promise<ActionDetail | null> 
     manifestasiId: row.manifestasiId,
     manifestasiIds: rawIds,
     breakdownId: row.breakdownId,
-      creator: creator
+    breakdownIds: rawBreakdownIds,
+    creator: creator
       ? {
           id: creator.id,
           name: creator.name,
@@ -540,8 +546,10 @@ export async function fetchManifestasiDetail(
 export async function fetchManifestasiDetailsMultiple(
   manifestasiIds: number[],
   breakdownId?: number | null,
+  breakdownIds?: number[] | null,
 ): Promise<{
   id: number;
+  breakdownId?: number;
   poin: string;
   label: string | null;
   keterangan: string;
@@ -549,13 +557,54 @@ export async function fetchManifestasiDetailsMultiple(
   contoh: string;
 }[]> {
   if (!manifestasiIds || manifestasiIds.length === 0) return [];
+  const bIds = breakdownIds && breakdownIds.length > 0
+    ? breakdownIds
+    : breakdownId != null ? [breakdownId] : [];
+
   const results = await Promise.all(
     manifestasiIds.map(async (id) => {
+      if (bIds.length > 0) {
+        const matchingBreakdowns = await db
+          .select({
+            id: manifestasiBreakdowns.id,
+            label: manifestasiBreakdowns.label,
+            keterangan: manifestasiBreakdowns.keterangan,
+            dalil: manifestasiBreakdowns.dalil,
+            contoh: manifestasiBreakdowns.contoh,
+          })
+          .from(manifestasiBreakdowns)
+          .where(
+            and(
+              eq(manifestasiBreakdowns.manifestasiId, id),
+              inArray(manifestasiBreakdowns.id, bIds),
+            ),
+          );
+
+        if (matchingBreakdowns.length > 0) {
+          const [manifestasi] = await db
+            .select({ poin: manifestasiIwa.poin })
+            .from(manifestasiIwa)
+            .where(eq(manifestasiIwa.id, id))
+            .limit(1);
+          if (!manifestasi) return [];
+
+          return matchingBreakdowns.map((b) => ({
+            id,
+            breakdownId: b.id,
+            poin: manifestasi.poin,
+            label: b.label,
+            keterangan: b.keterangan,
+            dalil: b.dalil,
+            contoh: b.contoh,
+          }));
+        }
+      }
+
       const detail = await fetchManifestasiDetail(id, breakdownId);
-      return detail ? { id, ...detail } : null;
+      return detail ? [{ id, ...detail }] : [];
     }),
   );
-  return results.filter((r): r is NonNullable<typeof r> => r !== null);
+  return results.flat();
 }
 
 export async function fetchUnreadNotificationCount(

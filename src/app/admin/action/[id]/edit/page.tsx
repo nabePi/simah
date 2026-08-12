@@ -60,6 +60,7 @@ export default async function AdminActionEditPage({
     manifestasiId: actionRow.manifestasiId ?? undefined,
     manifestasiIds: actionRow.manifestasiIds,
     breakdownId: actionRow.breakdownId ?? undefined,
+    breakdownIds: actionRow.breakdownIds,
   };
   return (
     <>

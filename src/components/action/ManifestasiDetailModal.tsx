@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
-import { fetchManifestasiDetailAction } from "@/actions/actions-item";
+import { fetchManifestasiDetailsMultipleAction } from "@/actions/actions-item";
 
 type ManifestasiDetail = {
   id: number;
+  breakdownId?: number;
   poin: string;
   label: string | null;
   keterangan: string;
@@ -17,6 +18,7 @@ type ManifestasiDetailModalProps = {
   manifestasiId?: number | null;
   manifestasiIds?: number[];
   breakdownId?: number | null;
+  breakdownIds?: number[];
   onClose: () => void;
 };
 
@@ -24,6 +26,7 @@ export function ManifestasiDetailModal({
   manifestasiId,
   manifestasiIds,
   breakdownId,
+  breakdownIds,
   onClose,
 }: ManifestasiDetailModalProps) {
   const [details, setDetails] = useState<ManifestasiDetail[]>([]);
@@ -37,6 +40,13 @@ export function ManifestasiDetailModal({
         ? [manifestasiId]
         : [];
 
+  const targetBreakdownIds =
+    breakdownIds && breakdownIds.length > 0
+      ? breakdownIds
+      : breakdownId != null
+        ? [breakdownId]
+        : [];
+
   useEffect(() => {
     if (targetIds.length === 0) return;
     function handleKey(event: KeyboardEvent) {
@@ -45,20 +55,18 @@ export function ManifestasiDetailModal({
     window.addEventListener("keydown", handleKey);
     setLoading(true);
 
-    Promise.all(
-      targetIds.map((id) =>
-        fetchManifestasiDetailAction(id, breakdownId ?? undefined).then(
-          (res) => (res ? { id, ...res } : null),
-        ),
-      ),
+    fetchManifestasiDetailsMultipleAction(
+      targetIds,
+      targetBreakdownIds[0] ?? undefined,
+      targetBreakdownIds,
     )
       .then((res) => {
-        setDetails(res.filter((item): item is ManifestasiDetail => item !== null));
+        setDetails(res);
       })
       .finally(() => setLoading(false));
 
     return () => window.removeEventListener("keydown", handleKey);
-  }, [JSON.stringify(targetIds), breakdownId, onClose]);
+  }, [JSON.stringify(targetIds), JSON.stringify(targetBreakdownIds), onClose]);
 
   if (targetIds.length === 0) return null;
 
@@ -91,7 +99,7 @@ export function ManifestasiDetailModal({
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar border-b border-outline-variant/40 pb-2.5 pr-8">
             {details.map((item, idx) => (
               <button
-                key={item.id ?? idx}
+                key={`${item.id}-${item.breakdownId ?? "none"}-${idx}`}
                 type="button"
                 onClick={() => setActiveTab(idx)}
                 className={`px-3 py-1.5 rounded-lg font-label-sm text-label-sm whitespace-nowrap transition-colors ${
@@ -100,7 +108,7 @@ export function ManifestasiDetailModal({
                     : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
                 }`}
               >
-                Manifestasi {idx + 1}
+                {idx + 1}. {item.label ?? item.poin}
               </button>
             ))}
           </div>

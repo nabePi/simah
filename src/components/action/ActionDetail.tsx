@@ -101,6 +101,7 @@ export function ActionDetail({
   } | null;
   manifestasis?: {
     id: number;
+    breakdownId?: number;
     poin: string;
     label: string | null;
     keterangan: string;
@@ -268,12 +269,18 @@ export function ActionDetail({
               <div className="flex flex-col gap-2">
                 {manifestasis && manifestasis.length > 0 ? (
                   manifestasis.map((m, idx) => (
-                    <div key={m.id || idx} className="flex items-start gap-2">
+                    <div key={`${m.id}-${m.breakdownId ?? "none"}-${idx}`} className="flex items-start gap-2">
                       <span className="shrink-0 w-5 h-5 rounded-full bg-tertiary/10 text-tertiary font-label-xs text-label-xs flex items-center justify-center font-bold mt-0.5">
                         {idx + 1}
                       </span>
                       <h2 className="font-headline-sm text-headline-sm text-on-surface">
                         {m.poin}
+                        {m.label && (
+                          <span className="font-body-sm text-body-sm text-on-surface-variant">
+                            {" "}
+                            — {m.label}
+                          </span>
+                        )}
                       </h2>
                     </div>
                   ))
@@ -668,6 +675,7 @@ export function ActionDetail({
           manifestasiIds={item.manifestasiIds}
           manifestasiId={item.manifestasiId ?? null}
           breakdownId={item.breakdownId}
+          breakdownIds={item.breakdownIds}
           onClose={() => setShowManifestasiModal(false)}
         />
       )}

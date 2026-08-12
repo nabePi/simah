@@ -70,6 +70,7 @@ export default async function EditDraftActionPage({
           manifestasiId: draft.manifestasiId ?? undefined,
           manifestasiIds: draft.manifestasiIds && draft.manifestasiIds.length > 0 ? draft.manifestasiIds : (draft.manifestasiId ? [draft.manifestasiId] : undefined),
           breakdownId: draft.breakdownId ?? undefined,
+          breakdownIds: draft.breakdownIds && draft.breakdownIds.length > 0 ? draft.breakdownIds : (draft.breakdownId ? [draft.breakdownId] : undefined),
         }}
         manifestasiOptions={manifestasiOptions}
         currentUser={

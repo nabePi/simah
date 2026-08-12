@@ -110,6 +110,7 @@ export const actions = pgTable("actions", {
   breakdownId: integer("breakdown_id").references(
     () => manifestasiBreakdowns.id,
   ),
+  breakdownIds: integer("breakdown_ids").array().default([]),
 });
 
 export const votes = pgTable(
