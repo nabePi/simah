@@ -74,6 +74,7 @@ export default async function EditActionPage({
           manifestasiId: action.manifestasiId ?? undefined,
           manifestasiIds: action.manifestasiIds && action.manifestasiIds.length > 0 ? action.manifestasiIds : (action.manifestasiId ? [action.manifestasiId] : undefined),
           breakdownId: action.breakdownId ?? undefined,
+          breakdownIds: action.breakdownIds && action.breakdownIds.length > 0 ? action.breakdownIds : (action.breakdownId ? [action.breakdownId] : undefined),
         }}
         manifestasiOptions={manifestasiOptions}
         currentUser={

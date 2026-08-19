@@ -168,6 +168,7 @@ export async function createDraft(input: {
   manifestasiId?: number;
   manifestasiIds?: number[];
   breakdownId?: number;
+  breakdownIds?: number[];
 }): Promise<{ id?: number; error?: string }> {
   const { userId } = await requireUser();
   if (!input.title.trim()) return { error: "Judul wajib diisi." };
@@ -176,6 +177,9 @@ export async function createDraft(input: {
     ? input.manifestasiIds
     : input.manifestasiId ? [input.manifestasiId] : [];
 
+  const bIds = input.breakdownIds && input.breakdownIds.length > 0
+    ? input.breakdownIds
+    : input.breakdownId ? [input.breakdownId] : [];
   const [created] = await db
     .insert(actions)
     .values({
@@ -192,7 +196,8 @@ export async function createDraft(input: {
       isPublished: false,
       manifestasiId: ids[0] ?? input.manifestasiId ?? null,
       manifestasiIds: ids,
-      breakdownId: input.breakdownId ?? null,
+      breakdownId: bIds[0] ?? input.breakdownId ?? null,
+      breakdownIds: bIds,
       startDate:
         input.hasDeadline && input.startDate
           ? new Date(input.startDate).toISOString().slice(0, 10)
@@ -215,6 +220,15 @@ export async function fetchManifestasiDetailAction(
   return fetchManifestasiDetail(manifestasiId, breakdownId ?? null);
 }
 
+export async function fetchManifestasiDetailsMultipleAction(
+  manifestasiIds: number[],
+  breakdownId?: number,
+  breakdownIds?: number[],
+) {
+  const { fetchManifestasiDetailsMultiple } = await import("@/lib/queries");
+  return fetchManifestasiDetailsMultiple(manifestasiIds, breakdownId ?? null, breakdownIds ?? null);
+}
+
 export async function updateDraft(
   id: number,
   input: {
@@ -235,6 +249,7 @@ export async function updateDraft(
     manifestasiId?: number;
     manifestasiIds?: number[];
     breakdownId?: number;
+    breakdownIds?: number[];
   },
 ): Promise<{ id?: number; error?: string }> {
   const { userId } = await requireUser();
@@ -252,6 +267,9 @@ export async function updateDraft(
     ? input.manifestasiIds
     : input.manifestasiId ? [input.manifestasiId] : [];
 
+  const bIds = input.breakdownIds && input.breakdownIds.length > 0
+    ? input.breakdownIds
+    : input.breakdownId ? [input.breakdownId] : [];
   await db
     .update(actions)
     .set({
@@ -267,7 +285,8 @@ export async function updateDraft(
       interactingSectors: input.interactingSectors,
       manifestasiId: ids[0] ?? input.manifestasiId ?? null,
       manifestasiIds: ids,
-      breakdownId: input.breakdownId ?? null,
+      breakdownId: bIds[0] ?? input.breakdownId ?? null,
+      breakdownIds: bIds,
       startDate:
         input.hasDeadline && input.startDate
           ? new Date(input.startDate).toISOString().slice(0, 10)
@@ -336,6 +355,7 @@ export async function updateOwnAction(
     manifestasiId?: number;
     manifestasiIds?: number[];
     breakdownId?: number;
+    breakdownIds?: number[];
   },
 ): Promise<{ id?: number; error?: string }> {
   const { userId } = await requireUser();
@@ -353,6 +373,9 @@ export async function updateOwnAction(
     ? input.manifestasiIds
     : input.manifestasiId ? [input.manifestasiId] : [];
 
+  const bIds = input.breakdownIds && input.breakdownIds.length > 0
+    ? input.breakdownIds
+    : input.breakdownId ? [input.breakdownId] : [];
   await db
     .update(actions)
     .set({
@@ -368,7 +391,8 @@ export async function updateOwnAction(
       interactingSectors: input.interactingSectors,
       manifestasiId: ids[0] ?? input.manifestasiId ?? null,
       manifestasiIds: ids,
-      breakdownId: input.breakdownId ?? null,
+      breakdownId: bIds[0] ?? input.breakdownId ?? null,
+      breakdownIds: bIds,
       startDate:
         input.hasDeadline && input.startDate
           ? new Date(input.startDate).toISOString().slice(0, 10)

@@ -39,9 +39,9 @@ export default async function AdminActionDetailPage({
     notFound();
   }
   const manifestasiDetails = actionRow.manifestasiIds && actionRow.manifestasiIds.length > 0
-    ? await fetchManifestasiDetailsMultiple(actionRow.manifestasiIds, actionRow.breakdownId)
+    ? await fetchManifestasiDetailsMultiple(actionRow.manifestasiIds, actionRow.breakdownId, actionRow.breakdownIds)
     : actionRow.manifestasiId
-      ? await fetchManifestasiDetailsMultiple([actionRow.manifestasiId], actionRow.breakdownId)
+      ? await fetchManifestasiDetailsMultiple([actionRow.manifestasiId], actionRow.breakdownId, actionRow.breakdownIds)
       : [];
   const manifestasiDetail = manifestasiDetails[0] ?? null;
   const contributionRows = await fetchContributionsForAction(Number(id));
@@ -99,6 +99,7 @@ export default async function AdminActionDetailPage({
     manifestasiId: actionRow.manifestasiId ?? undefined,
     manifestasiIds: actionRow.manifestasiIds,
     breakdownId: actionRow.breakdownId ?? undefined,
+    breakdownIds: actionRow.breakdownIds,
   };
   return (
     <>

@@ -23,6 +23,7 @@ export type ActionItem = {
   manifestasiId?: number;
   manifestasiIds: number[];
   breakdownId?: number;
+  breakdownIds?: number[];
   manifestasiPoin?: string;
   contributorNames?: string[];
 };
@@ -59,5 +60,7 @@ export type DraftItem = {
   createdById: string;
   createdAt: string;
   manifestasiId?: number;
+  manifestasiIds?: number[];
   breakdownId?: number;
+  breakdownIds?: number[];
 };

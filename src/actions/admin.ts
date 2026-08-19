@@ -258,10 +258,20 @@ export async function adminUpdateAction(
     startDate?: string | null;
     endDate?: string | null;
     manifestasiId?: number | null;
+    manifestasiIds?: number[] | null;
     breakdownId?: number | null;
+    breakdownIds?: number[] | null;
   }
 ): Promise<{ error?: string }> {
   await requireAdminSession();
+  const ids = input.manifestasiIds && input.manifestasiIds.length > 0
+    ? input.manifestasiIds
+    : input.manifestasiId != null ? [input.manifestasiId] : [];
+
+  const bIds = input.breakdownIds && input.breakdownIds.length > 0
+    ? input.breakdownIds
+    : input.breakdownId != null ? [input.breakdownId] : [];
+
   await db
     .update(actions)
     .set({
@@ -277,8 +287,10 @@ export async function adminUpdateAction(
       status: input.status ?? "todo",
       startDate: input.startDate ?? null,
       endDate: input.endDate ?? null,
-      manifestasiId: input.manifestasiId ?? null,
-      breakdownId: input.breakdownId ?? null,
+      manifestasiId: ids[0] ?? input.manifestasiId ?? null,
+      manifestasiIds: ids,
+      breakdownId: bIds[0] ?? input.breakdownId ?? null,
+      breakdownIds: bIds,
       updatedAt: new Date(),
     })
     .where(eq(actions.id, id));

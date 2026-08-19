@@ -45,6 +45,7 @@ export type ActionItemFormInitialValues = {
   manifestasiId?: number;
   manifestasiIds?: number[];
   breakdownId?: number;
+  breakdownIds?: number[];
 };
 
 const statusOptions: {
@@ -103,15 +104,11 @@ export function ActionItemForm({
   );
   const selectedManifestasiId = selectedManifestasiIds[0] ? String(selectedManifestasiIds[0]) : "";
 
-  const [selectedBreakdownId, setSelectedBreakdownId] = useState(
-    initialValues?.breakdownId ? String(initialValues.breakdownId) : "",
+  const [selectedBreakdownIds, setSelectedBreakdownIds] = useState<number[]>(
+    initialValues?.breakdownIds && initialValues.breakdownIds.length > 0
+      ? initialValues.breakdownIds
+      : initialValues?.breakdownId ? [initialValues.breakdownId] : [],
   );
-  const selectedBreakdownOwnerId =
-    selectedBreakdownId && manifestasiOptions
-      ? manifestasiOptions.find((m) =>
-          m.breakdowns.some((b) => String(b.id) === selectedBreakdownId),
-        )?.id ?? null
-      : null;
 
   function toggleManifestasi(id: number) {
     setSelectedManifestasiIds((current) => {
@@ -119,11 +116,29 @@ export function ActionItemForm({
       const next = isRemoving
         ? current.filter((item) => item !== id)
         : [...current, id];
-      if (next.length === 0 || (isRemoving && selectedBreakdownOwnerId === id)) {
-        setSelectedBreakdownId("");
+      if (isRemoving) {
+        const item = manifestasiOptions.find((m) => m.id === id);
+        const mBreakdownIds = item?.breakdowns.map((b) => b.id) ?? [];
+        setSelectedBreakdownIds((curr) => curr.filter((bId) => !mBreakdownIds.includes(bId)));
+      }
+      if (next.length === 0) {
+        setSelectedBreakdownIds([]);
       }
       return next;
     });
+  }
+
+
+  function toggleBreakdown(bId: number, mId: number) {
+    setSelectedBreakdownIds((current) => {
+      const isRemoving = current.includes(bId);
+      return isRemoving
+        ? current.filter((item) => item !== bId)
+        : [...current, bId];
+    });
+    if (!selectedManifestasiIds.includes(mId)) {
+      setSelectedManifestasiIds((curr) => [...curr, mId]);
+    }
   }
   const [showManifestasiModal, setShowManifestasiModal] = useState(false);
   const [manifestasiMenuOpen, setManifestasiMenuOpen] = useState(false);
@@ -292,9 +307,8 @@ export function ActionItemForm({
         endDate: endDate || undefined,
         manifestasiId: selectedManifestasiIds[0] ?? undefined,
         manifestasiIds: selectedManifestasiIds,
-        breakdownId: selectedBreakdownId
-          ? Number(selectedBreakdownId)
-          : undefined,
+        breakdownId: selectedBreakdownIds[0] ?? undefined,
+        breakdownIds: selectedBreakdownIds,
       };
       const res = publishedActionId
         ? await updateOwnAction(publishedActionId, payload)
@@ -332,8 +346,8 @@ export function ActionItemForm({
       endDate !== (initialValues?.endDate ?? "") ||
       selectedManifestasiIds.join(",") !==
         (initialValues?.manifestasiIds ?? (initialValues?.manifestasiId ? [initialValues.manifestasiId] : [])).join(",") ||
-      selectedBreakdownId !==
-        (initialValues?.breakdownId ? String(initialValues.breakdownId) : "")
+      selectedBreakdownIds.join(",") !==
+        (initialValues?.breakdownIds ?? (initialValues?.breakdownId ? [initialValues.breakdownId] : [])).join(",")
     : title.trim().length > 0 ||
       background.trim().length > 0 ||
       objectives.trim().length > 0 ||
@@ -450,7 +464,7 @@ export function ActionItemForm({
                     aria-selected={selectedManifestasiIds.length === 0}
                     onClick={() => {
                       setSelectedManifestasiIds([]);
-                      setSelectedBreakdownId("");
+                      setSelectedBreakdownIds([]);
                     }}
                     className={`w-full flex items-center gap-2 px-4 py-2.5 text-left font-label-md text-label-md transition-colors ${selectedManifestasiIds.length === 0 ? "bg-primary-container text-on-primary-container font-semibold" : "text-on-surface hover:bg-surface-container-low"}`}
                   >
@@ -460,8 +474,7 @@ export function ActionItemForm({
                   {manifestasiOptions.map((m) => {
                     const active = selectedManifestasiIds.includes(m.id);
                     const breakdowns = (m.breakdowns ?? []).filter((b) => b.label !== null);
-                    const breakdownLockedElsewhere =
-                      selectedBreakdownOwnerId !== null && selectedBreakdownOwnerId !== m.id;
+
                     return (
                       <div key={m.id} className="flex flex-col border-b border-outline-variant/20 last:border-0">
                         <button
@@ -482,50 +495,27 @@ export function ActionItemForm({
                             <span className="text-[11px] font-label-sm text-outline font-semibold uppercase tracking-wider">
                               Sub-Opsi Breakdown:
                             </span>
-                            {breakdownLockedElsewhere && (
-                              <span className="text-[11px] text-outline italic">
-                                Breakdown sudah dipilih di Manifestasi lain. Kosongkan dulu untuk memilih di sini.
-                              </span>
-                            )}
                             {breakdowns.map((b) => {
-                              const isSubSelected =
-                                active && selectedBreakdownId === String(b.id);
+                              const isSubSelected = selectedBreakdownIds.includes(b.id);
                               return (
                                 <button
                                   key={b.id}
                                   type="button"
-                                  disabled={breakdownLockedElsewhere}
-                                  title={
-                                    breakdownLockedElsewhere
-                                      ? "Hanya bisa memilih satu breakdown pada satu waktu"
-                                      : undefined
-                                  }
-                                  onClick={() => {
-                                    if (isSubSelected) {
-                                      setSelectedBreakdownId("");
-                                    } else {
-                                      setSelectedBreakdownId(String(b.id));
-                                      if (!selectedManifestasiIds.includes(m.id)) {
-                                        setSelectedManifestasiIds((curr) => [...curr, m.id]);
-                                      }
-                                    }
-                                  }}
+                                  onClick={() => toggleBreakdown(b.id, m.id)}
                                   className={`w-full flex items-start gap-2 px-3 py-2 text-left text-body-xs rounded-md transition-colors ${
                                     isSubSelected
                                       ? "bg-primary-container text-on-primary-container font-semibold"
-                                      : breakdownLockedElsewhere
-                                        ? "text-outline/60 cursor-not-allowed opacity-60"
-                                        : "text-on-surface-variant hover:bg-surface-container-low"
+                                      : "text-on-surface-variant hover:bg-surface-container-low"
                                   }`}
                                 >
                                   <div
-                                    className={`mt-0.5 shrink-0 w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                                    className={`mt-0.5 shrink-0 w-3.5 h-3.5 rounded border flex items-center justify-center transition-colors ${
                                       isSubSelected
                                         ? "border-primary bg-primary text-on-primary"
                                         : "border-outline bg-surface"
                                     }`}
                                   >
-                                    {isSubSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                    {isSubSelected && <Icon name="check" className="text-[10px]" />}
                                   </div>
                                   <span className="whitespace-normal leading-snug">{b.label}</span>
                                 </button>
@@ -546,9 +536,9 @@ export function ActionItemForm({
               {selectedManifestasiIds.map((id) => {
                 const item = manifestasiOptions.find((m) => m.id === id);
                 if (!item) return null;
-                const breakdownItem = item.breakdowns.find(
-                  (b) => String(b.id) === selectedBreakdownId,
-                );
+                const selBreakdownLabels = item.breakdowns
+                  .filter((b) => selectedBreakdownIds.includes(b.id) && b.label)
+                  .map((b) => b.label);
                 return (
                   <span
                     key={id}
@@ -556,7 +546,7 @@ export function ActionItemForm({
                   >
                     <span className="line-clamp-2">
                       {item.poin}
-                      {breakdownItem?.label ? ` — (${breakdownItem.label})` : ""}
+                      {selBreakdownLabels.length > 0 ? ` — (${selBreakdownLabels.join(", ")})` : ""}
                     </span>
                     <button
                       type="button"
@@ -1112,7 +1102,8 @@ export function ActionItemForm({
         <ManifestasiDetailModal
           manifestasiIds={selectedManifestasiIds}
           manifestasiId={selectedManifestasiId ? Number(selectedManifestasiId) : null}
-          breakdownId={selectedBreakdownId ? Number(selectedBreakdownId) : null}
+          breakdownId={selectedBreakdownIds[0] ?? null}
+          breakdownIds={selectedBreakdownIds}
           onClose={() => setShowManifestasiModal(false)}
         />
       )}

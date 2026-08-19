@@ -1,0 +1,1 @@
+ALTER TABLE "actions" ADD COLUMN "breakdown_ids" integer[] DEFAULT '{}';
